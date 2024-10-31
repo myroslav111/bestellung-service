@@ -26,8 +26,7 @@ public class Main {
         kunde.setKunde(scanner);
 
         System.out.println("hi");
-        System.out.println("hi");
-        System.out.println(3);
+
 
 
         System.out.println("Geben Sie Ihre Email");
