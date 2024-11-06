@@ -13,7 +13,7 @@ public class AnzeigenBeleg {
 
         for(Map.Entry<String, Integer> entry: produktList.entrySet()){
             System.out.println(entry.getKey());
-            System.out.println("      " + entry.getValue() + "St.  " +
+            System.out.println("                     " + entry.getValue() + "St.  " +
                     (warenbestand.produkte.get(entry.getKey()).getPreis()
                             * entry.getValue()) + "euro");
         }
