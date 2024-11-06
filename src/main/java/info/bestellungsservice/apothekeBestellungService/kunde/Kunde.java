@@ -1,7 +1,7 @@
 package info.bestellungsservice.apothekeBestellungService.kunde;
 
 
-import info.bestellungsservice.apothekeBestellungService.utils.BenutzerUmfrage;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,29 +24,29 @@ public class Kunde {
         this.name = name;
         this.vorname = vorname;
         this.adresse = adresse;
-        this.email = email;
+        this.email = email.toLowerCase();
         this.passwort = passwort;
     }
 
     public void setKunde(Scanner scanner){
-
-        if (BenutzerUmfrage.userAuswahlJaOderNein(scanner, "Besitzen Sie bereits ein Konto? y|n")) {
-            BenutzerUmfrage.userAnfrageMailPsw();
-        } else {
-
             System.out.println("Geben Sie Ihre Name ");
             setName(scanner.next());
             System.out.println("Geben Sie Ihre Vornhame");
             setVorname(scanner.next());
             System.out.println("Geben Sie Ihre Adresse");
-            setAdresse(scanner.next());
+            scanner.nextLine();
+            setAdresse(scanner.nextLine());
+
             System.out.println("Geben Sie Ihre Email");
             setEmail(scanner.next());
             System.out.println("Geben Sie Ihre Passwort");
             setPasswort(scanner.next());
             setKundennummer((int) (Math.random() * 1000));
-            System.out.println("Ihre Kundenumer" + this.kundennummer);
+            //System.out.println("Ihre Kundenumer" + this.kundennummer);
+    }
 
-        }
+    @Override
+    public String toString(){
+        return String.valueOf(kundennummer) + "," + name + "," + vorname + "," + adresse + "," + email + "," + passwort;
     }
 }
