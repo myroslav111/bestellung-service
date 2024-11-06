@@ -1,6 +1,6 @@
-package info.bestellungsservice.apothekeBestellungService.utils;
+package info.bestellungsservice.apothekebestellungservice.utils;
 
-import info.bestellungsservice.apothekeBestellungService.logistikzentrum.Warenbestand;
+import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
 
 
 import java.util.Map;

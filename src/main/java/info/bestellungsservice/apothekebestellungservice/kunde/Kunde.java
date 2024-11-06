@@ -1,4 +1,4 @@
-package info.bestellungsservice.apothekeBestellungService.kunde;
+package info.bestellungsservice.apothekebestellungservice.kunde;
 
 
 

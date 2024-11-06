@@ -1,6 +1,6 @@
-package info.bestellungsservice.apothekeBestellungService.apotheke;
+package info.bestellungsservice.apothekebestellungservice.apotheke;
 
-import info.bestellungsservice.apothekeBestellungService.ProduktList;
+import info.bestellungsservice.apothekebestellungservice.ProduktList;
 
 import java.util.HashMap;
 import java.util.Map;

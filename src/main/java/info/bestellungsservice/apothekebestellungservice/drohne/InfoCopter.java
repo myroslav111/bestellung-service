@@ -1,6 +1,6 @@
-package info.bestellungsservice.apothekeBestellungService.drohne;
+package info.bestellungsservice.apothekebestellungservice.drohne;
 
-import info.bestellungsservice.apothekeBestellungService.paket.Paket;
+import info.bestellungsservice.apothekebestellungservice.paket.Paket;
 
 
 public class InfoCopter extends Drohne implements DroneOS {

@@ -1,16 +1,13 @@
-package info.bestellungsservice.apothekeBestellungService.apotheke;
+package info.bestellungsservice.apothekebestellungservice.apotheke;
 
-import info.bestellungsservice.apothekeBestellungService.ProduktList;
-import info.bestellungsservice.apothekeBestellungService.kunde.Kunde;
-import info.bestellungsservice.apothekeBestellungService.kunde.UserFileManager;
-import info.bestellungsservice.apothekeBestellungService.logistikzentrum.Warenbestand;
-import info.bestellungsservice.apothekeBestellungService.utils.AnzeigenBeleg;
-import info.bestellungsservice.apothekeBestellungService.utils.BenutzerAnmeldeDatenAbfragen;
-import info.bestellungsservice.apothekeBestellungService.utils.BenutzerUmfrage;
-import info.bestellungsservice.apothekeBestellungService.utils.Nachricht;
+import info.bestellungsservice.apothekebestellungservice.ProduktList;
+import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
+import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
+import info.bestellungsservice.apothekebestellungservice.utils.AnzeigenBeleg;
+import info.bestellungsservice.apothekebestellungservice.utils.BenutzerAnmeldeDatenAbfragen;
+import info.bestellungsservice.apothekebestellungservice.utils.BenutzerUmfrage;
+import info.bestellungsservice.apothekebestellungservice.utils.Nachricht;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -158,12 +155,18 @@ public class Apotheke implements BestellService {
         Scanner scanner = new Scanner(System.in);
         // Die Methode fragt den Benutzer, ob er etwas bestellen möchte
         if (BenutzerUmfrage.userAuswahlJaOderNein(scanner, "Wollen Sie etwas bestellen y/n")) {
-            System.out.println("Das haben wir im Angebot:");
+            System.out.println("Verfügbare Produkte:");
+            System.out.println();
+            System.out.println();
+
             // ermöglicht, mehrere Produkte zu bestellen.
             do{
                 // Jedes Produkt wird durch einen Aufruf angezeigt
-                ProduktList.showMedikamenteName();
-                System.out.println("Was wollen Sie bestellen");
+                //ProduktList.showMedikamenteName();
+                warenbestand.showWarenBestand();
+                System.out.println("Bitte gben Sie das gewünschte Produkte ein:");
+                System.out.println();
+                System.out.println();
                 String nameMedikament = sucheMedikamentNachEingabe(scanner);
 
                 System.out.println("Wie viele Stück");
@@ -215,6 +218,7 @@ public class Apotheke implements BestellService {
             // Überprüft die Anmeldedaten
             if (apotheke.login(email, psw)) {
                 // Sucht nach dem Namen des Benutzers basierend auf der E-Mail
+                System.out.println("Login erfolgreich");
                 Nachricht.benutzerBegrussen(userFileManager.kundeNameNachBedienungSuchen(email));
                 kontoAnmeldungErfolgreich = true;
             }

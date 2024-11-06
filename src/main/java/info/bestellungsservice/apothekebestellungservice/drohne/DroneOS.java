@@ -1,4 +1,4 @@
-package info.bestellungsservice.apothekeBestellungService.drohne;
+package info.bestellungsservice.apothekebestellungservice.drohne;
 
 public interface DroneOS {
     public void berechneStrecke(String start, String ziel);
