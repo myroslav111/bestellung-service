@@ -40,7 +40,7 @@ public enum ProduktList {
 
     public static void showMedikamenteName() {
         for(ProduktList produkt: ProduktList.values()){
-            System.out.println(produkt.getMedikamenteName() + "--> " + "Bestellungsnummer______" + produkt.getMedikamenteNummer() );
+            System.out.println(produkt.getMedikamenteName() + "--> " + "Bestellungsnummer    " + produkt.getMedikamenteNummer() );
         }
     }
 }
