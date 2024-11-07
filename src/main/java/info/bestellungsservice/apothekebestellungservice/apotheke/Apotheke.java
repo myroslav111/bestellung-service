@@ -164,12 +164,12 @@ public class Apotheke implements BestellService {
                 // Jedes Produkt wird durch einen Aufruf angezeigt
                 //ProduktList.showMedikamenteName();
                 warenbestand.showWarenBestand();
-                System.out.println("Bitte gben Sie das gewünschte Produkte ein:");
+                System.out.println("Bitte geben Sie das gewünschte Produkt ein:");
                 System.out.println();
                 System.out.println();
                 String nameMedikament = sucheMedikamentNachEingabe(scanner);
 
-                System.out.println("Wie viele Stück");
+                System.out.println("Wie viele Stück?");
                 int menge = scanner.nextInt();
 
                 pruefeUndAktualisiereMedikamentImWarenkorb(nameMedikament, menge, warenbestand, warenkorb);
@@ -218,7 +218,7 @@ public class Apotheke implements BestellService {
             // Überprüft die Anmeldedaten
             if (apotheke.login(email, psw)) {
                 // Sucht nach dem Namen des Benutzers basierend auf der E-Mail
-                System.out.println("Login erfolgreich");
+                System.out.println("Login erfolgreich!");
                 Nachricht.benutzerBegrussen(userFileManager.kundeNameNachBedienungSuchen(email));
                 kontoAnmeldungErfolgreich = true;
             }
