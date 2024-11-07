@@ -169,7 +169,7 @@ public class Apotheke implements BestellService {
                 System.out.println();
                 String nameMedikament = sucheMedikamentNachEingabe(scanner);
 
-                System.out.println("Wie viele Stück?");
+                System.out.println("Geben Sie die gewünschte Anzahl ein:");
                 int menge = scanner.nextInt();
 
                 pruefeUndAktualisiereMedikamentImWarenkorb(nameMedikament, menge, warenbestand, warenkorb);
