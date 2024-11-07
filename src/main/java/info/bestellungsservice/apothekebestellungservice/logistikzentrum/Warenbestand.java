@@ -1,7 +1,7 @@
-package info.bestellungsservice.apothekeBestellungService.logistikzentrum;
+package info.bestellungsservice.apothekebestellungservice.logistikzentrum;
 
-import info.bestellungsservice.apothekeBestellungService.ProduktList;
-import info.bestellungsservice.apothekeBestellungService.produkt.Produkt;
+import info.bestellungsservice.apothekebestellungservice.ProduktList;
+import info.bestellungsservice.apothekebestellungservice.produkt.Produkt;
 
 
 import java.util.HashMap;
@@ -25,7 +25,11 @@ public class Warenbestand {
     public  void showWarenBestand(){
         System.out.println("Aktueller Warenbestand:");
         for(Map.Entry<String, Produkt> produkt: produkte.entrySet()){
-            System.out.println(produkt.getKey() + ": " + produkt.getValue().getMenge() + " Stück");
+            //System.out.println(produkt.getKey() + ": " + produkt.getValue().getMenge() + " Stück");
+
+            System.out.println(produkt.getKey() + " -> " + "Preis: " + produkt.getValue().getPreis() + ", "
+                    + "Gewicht: " + produkt.getValue().getGewicht() + ", " + "Verfügbar: "
+                    + produkt.getValue().getMenge() + "   Produktnummer-<" + ProduktList.valueOf(produkt.getKey().toUpperCase()).getMedikamenteNummer() + ">-");
         }
     }
     // Ausgabe konkreten Produkt

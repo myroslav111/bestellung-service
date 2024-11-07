@@ -1,4 +1,4 @@
-package info.bestellungsservice.apothekeBestellungService;
+package info.bestellungsservice.apothekebestellungservice;
 
 public class DeliveryCalculator {
 

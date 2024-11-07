@@ -1,4 +1,4 @@
-package info.bestellungsservice.apothekeBestellungService.kunde;
+package info.bestellungsservice.apothekebestellungservice.kunde;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -48,7 +48,7 @@ public class UserFileManager {
     }
 
     public boolean isKunde(String userEmail, String userPsw){
-        System.out.println(userEmail + userPsw);
+        //System.out.println(userEmail + userPsw);
         return liestUsers().stream().anyMatch(user -> user.getEmail().equals(userEmail) && user.getPasswort().equals(userPsw));
 
     }

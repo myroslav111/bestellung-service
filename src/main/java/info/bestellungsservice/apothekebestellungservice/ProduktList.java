@@ -1,4 +1,4 @@
-package info.bestellungsservice.apothekeBestellungService;
+package info.bestellungsservice.apothekebestellungservice;
 
 
 
@@ -6,8 +6,8 @@ public enum ProduktList {
     IBU("Ibu", 1),
     ASPIRIN("Aspirin", 2),
     PARACETAMOL("Paracetamol", 3),
-    VITAMIN_C("Vitamin C", 4),
-    VITAMIN_D("Vitamin D", 5);
+    VITAMIN_C("Vitamin_C", 4),
+    VITAMIN_D("Vitamin_D", 5);
 
 
     final String medikamenteName;
@@ -40,7 +40,7 @@ public enum ProduktList {
 
     public static void showMedikamenteName() {
         for(ProduktList produkt: ProduktList.values()){
-            System.out.println(produkt.getMedikamenteName() + "-->" + "Bestellungsnummer______" + produkt.getMedikamenteNummer() );
+            System.out.println(produkt.getMedikamenteName() + "--> " + "Bestellungsnummer    " + produkt.getMedikamenteNummer() );
         }
     }
 }

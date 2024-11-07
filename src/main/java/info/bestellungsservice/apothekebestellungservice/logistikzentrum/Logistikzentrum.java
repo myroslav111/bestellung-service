@@ -1,6 +1,6 @@
-package info.bestellungsservice.apothekeBestellungService.logistikzentrum;
+package info.bestellungsservice.apothekebestellungservice.logistikzentrum;
 
-import info.bestellungsservice.apothekeBestellungService.paket.Paket;
+import info.bestellungsservice.apothekebestellungservice.paket.Paket;
 
 
 import java.util.List;

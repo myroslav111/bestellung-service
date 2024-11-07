@@ -1,4 +1,4 @@
-package info.bestellungsservice.apothekeBestellungService.paket;
+package info.bestellungsservice.apothekebestellungservice.paket;
 
 import lombok.Getter;
 

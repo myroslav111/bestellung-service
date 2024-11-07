@@ -1,4 +1,4 @@
-package info.bestellungsservice.apothekeBestellungService.drohne;
+package info.bestellungsservice.apothekebestellungservice.drohne;
 
 import lombok.Getter;
 import lombok.Setter;
