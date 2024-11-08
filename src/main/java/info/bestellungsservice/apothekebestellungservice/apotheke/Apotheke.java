@@ -4,8 +4,8 @@ import info.bestellungsservice.apothekebestellungservice.ProduktList;
 import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
 import info.bestellungsservice.apothekebestellungservice.utils.AnzeigenBeleg;
-import info.bestellungsservice.apothekebestellungservice.utils.BenutzerAnmeldeDatenAbfragen;
-import info.bestellungsservice.apothekebestellungservice.utils.BenutzerUmfrage;
+import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
+import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
 import info.bestellungsservice.apothekebestellungservice.utils.Nachricht;
 
 import java.util.Map;
@@ -37,7 +37,7 @@ public class Apotheke implements BestellService {
             for(Map.Entry<String, Integer> entry: produktList.entrySet()){
                 betragBestellen += warenbestand.produkte.get(entry.getKey()).getPreis() * entry.getValue();
                 // Aktualisierung des Warenbestands
-                warenbestand.entfernenProdukte(entry.getKey(), entry.getValue(), warenbestand.produkte);
+                warenbestand.deleteProdukte(entry.getKey(), entry.getValue(), warenbestand.produkte);
             }
 
         System.out.println("Hier ist Ihre Bestellung");
@@ -75,13 +75,13 @@ public class Apotheke implements BestellService {
             //Vergleicht den Wert dieser Zahl mit der Medikamentennummer des Produkts.
 
             // Überprüfe, ob inputUser eine Zahl ist
-            if(inputUser instanceof Number && ((Number)inputUser).intValue() == produkt.getMedikamenteNummer()){
+            if(inputUser instanceof Number && ((Number)inputUser).intValue() == produkt.getProduktNummer()){
                 // Setze den Medikamentennamen, wenn die Nummer übereinstimmt
-                nameMedikament = produkt.getMedikamenteName();
-            }else if (produkt.getMedikamenteName().trim().equalsIgnoreCase(inputUser.toString().trim())){
+                nameMedikament = produkt.getProduktName();
+            }else if (produkt.getProduktName().trim().equalsIgnoreCase(inputUser.toString().trim())){
 
                 // Setze den Medikamentennamen, wenn der Name übereinstimmt
-                nameMedikament = produkt.getMedikamenteName();
+                nameMedikament = produkt.getProduktName();
             }else {
                 System.out.println("°°°°°°°°°°°°°°°");
             }
@@ -104,7 +104,7 @@ public class Apotheke implements BestellService {
             if (!(warenbestand.produkte.get(nameMedikament).getMenge() - menge < 0)) {
                 warenkorb.addProdukte(nameMedikament, menge);
             }else {
-                System.out.println("Niedriger Lagerbestand. Verfügbar sind________" + warenbestand.produkte.get(nameMedikament).getMenge() + "St." );
+                System.out.println("Niedriger Lagerbestand. \nVerfügbar sind" + warenbestand.produkte.get(nameMedikament).getMenge() + "St." );
             }
 
         }
@@ -116,26 +116,25 @@ public class Apotheke implements BestellService {
         // Wenn der Benutzer zustimmt, wird die Methode berechneGesamtpreis aufgerufen,
         // um den Gesamtpreis der Bestellung zu berechnen und den Beleg anzuzeigen.
 
-        if (BenutzerUmfrage.userAuswahlJaOderNein(scanner, "Bestätigen Sie die Bestellung? y/n")) {
+        if (BenutzerFragen.frageJaNein(scanner, "Bestätigen Sie die Bestellung? (y/n)")) {
             berechneGesamtpreis(warenkorb.produktList, warenbestand);
-        }else if(BenutzerUmfrage.userAuswahlJaOderNein(scanner, "Wollen Sie ganze Bestelung Abbrechnen (y) \n oder nur etwas koregieren (k)")) {
+        }else if(BenutzerFragen.frageJaNein(scanner, "Wollen Sie ganze Bestellung abbrechen (y) \noder nur etwas korrigieren (k)")) {
             // Wenn der Benutzer die gesamte Bestellung abbrechen möchte,
             // wird der Warenkorb geleert und der aktuelle (leere) Warenkorb angezeigt.
             warenkorb.clearProdukt();
             warenkorb.showWarenkorb();
         }else{
-            // Wenn der Benutzer Änderungen an der Bestellung vornehmen möchte,
-            // wird ihm die Option gegeben, Produkte hinzuzufügen oder zu reduzieren.
-            if (BenutzerUmfrage.userAuswahlJaOderNein(scanner, "Etwas add (y) \n oder reduzieren (r)")) {
+            if (BenutzerFragen.frageJaNein(scanner, "Möchten Sie etwas hinzufügen (y) \noder reduzieren (r)?")) {
                 bestellungAufgeben(warenbestand, warenkorb);
             }
             do {
                 // Zeigt den aktuellen Inhalt des Warenkorbs an.
                 warenkorb.showWarenkorb();
-                System.out.println("Was wollen Sie reduzieren, geben Ihr Auswal als Bestelungsnummer");
+                System.out.println("Was möchten Sie reduzieren, geben Sie die Produktnummer ein:");
+
                 String medikamentName = sucheMedikamentNachEingabe(scanner);
 
-                System.out.println("Wie viele soll sein");
+                System.out.println("Wie viele " + medikamentName + " möchten Sie reduzieren?:");
                 int menge = scanner.nextInt();
 
                 // Aktualisiert die Menge des ausgewählten Produkts im Warenkorb.
@@ -143,7 +142,7 @@ public class Apotheke implements BestellService {
 
 
                 // Fragt den Benutzer, ob er weitere Produkte reduzieren möchte.
-            }while (BenutzerUmfrage.userAuswahlJaOderNein(scanner, "Noch was reduzieren (y) \n oder (n)"));
+            }while (BenutzerFragen.frageJaNein(scanner, "Wollen Sie noch etwas reduzieren? (y/n)"));
 
             berechneGesamtpreis(warenkorb.produktList, warenbestand);
         }
@@ -154,38 +153,31 @@ public class Apotheke implements BestellService {
     public void bestellungAufgeben(Warenbestand warenbestand, Warenkorb warenkorb) {
         Scanner scanner = new Scanner(System.in);
         // Die Methode fragt den Benutzer, ob er etwas bestellen möchte
-        if (BenutzerUmfrage.userAuswahlJaOderNein(scanner, "Wollen Sie etwas bestellen y/n")) {
-            System.out.println("Verfügbare Produkte:");
-            System.out.println();
-            System.out.println();
+        if (BenutzerFragen.frageJaNein(scanner, "Wollen Sie etwas bestellen? (y/n)")) {
+            System.out.println("\n\nVerfügbare Produkte:");
 
             // ermöglicht, mehrere Produkte zu bestellen.
             do{
                 // Jedes Produkt wird durch einen Aufruf angezeigt
-                //ProduktList.showMedikamenteName();
                 warenbestand.showWarenBestand();
-                System.out.println("Bitte geben Sie das gewünschte Produkt ein:");
-                System.out.println();
-                System.out.println();
+                System.out.println("\nBitte geben Sie das gewünschte Produkt ein:");
                 String nameMedikament = sucheMedikamentNachEingabe(scanner);
-
-                System.out.println("Geben Sie die gewünschte Anzahl ein:");
+                System.out.println("\nGeben Sie die gewünschte Anzahl ein:");
                 int menge = scanner.nextInt();
 
                 pruefeUndAktualisiereMedikamentImWarenkorb(nameMedikament, menge, warenbestand, warenkorb);
 
                 if (warenkorb.produktList.isEmpty()) {
-                    System.out.println("Ihr Warenkorb ist aktuell leer");
+                    System.out.println("\nIhr Warenkorb ist aktuell leer.");
                 }else{
-                    System.out.println("Ihre aktuelle Bestellung");
+                    System.out.println("\nIhr aktueller Warenkorb:");
+                    warenkorb.showWarenkorb();
                 }
 
-                warenkorb.showWarenkorb();
             }
-            while (BenutzerUmfrage.userAuswahlJaOderNein(scanner, "Wollen Sie noch etwas bestellen? (y) oder (n)"));
+            while (BenutzerFragen.frageJaNein(scanner, "Wollen Sie noch etwas bestellen? (y/n)"));
 
-            System.out.println("Hier ist Ihre Bestellung");
-            // Bestellübersicht
+            System.out.println("Hier ist Ihre Bestellung:\n");
             warenkorb.showWarenkorb();
 
             bestellvorgangAbschliessen(scanner, warenbestand, warenkorb);
@@ -212,14 +204,14 @@ public class Apotheke implements BestellService {
         do {
             counter += 1;
             // Benutzer wird nach E-Mail und Passwort gefragt
-            String email = BenutzerAnmeldeDatenAbfragen.emailAbfragen(scanner);
-            String psw = BenutzerAnmeldeDatenAbfragen.passwortAbfragen(scanner);
+            String email = AbfrageAnmeldedaten.userInputEmail(scanner);
+            String psw = AbfrageAnmeldedaten.userInputPasswort(scanner);
 
             // Überprüft die Anmeldedaten
             if (apotheke.login(email, psw)) {
                 // Sucht nach dem Namen des Benutzers basierend auf der E-Mail
                 System.out.println("Login erfolgreich!");
-                Nachricht.benutzerBegrussen(userFileManager.kundeNameNachBedienungSuchen(email));
+                Nachricht.begruessung(userFileManager.getKundenName(email));
                 kontoAnmeldungErfolgreich = true;
             }
             if (counter >= 3) {
