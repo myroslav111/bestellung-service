@@ -5,12 +5,11 @@ import info.bestellungsservice.apothekebestellungservice.apotheke.Warenkorb;
 import info.bestellungsservice.apothekebestellungservice.kunde.Kunde;
 import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
-import info.bestellungsservice.apothekebestellungservice.utils.BenutzerAnmeldeDatenAbfragen;
-import info.bestellungsservice.apothekebestellungservice.utils.BenutzerUmfrage;
+import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
+import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
 import info.bestellungsservice.apothekebestellungservice.utils.Nachricht;
 
 import java.util.Scanner;
-import java.util.logging.Logger;
 
 public class ApplicationRunner {
 
@@ -20,7 +19,6 @@ public class ApplicationRunner {
         this.scanner = new Scanner(System.in);
     }
 
-
     public void run() {
         Apotheke apotheke = new Apotheke();
         Warenkorb warenkorb = new Warenkorb();
@@ -28,44 +26,39 @@ public class ApplicationRunner {
         UserFileManager userFileManager = new UserFileManager();
         Kunde kunde = new Kunde();
 
-        userFileManager.liestUsers();
-
-        // Fragt den Benutzer, ob er bereits ein Konto besitzt (Ja/Nein)
-        checkIfUserSayYes(apotheke, userFileManager, warenbestand, warenkorb, kunde);
+        //userFileManager.liestUsers();
+        anmelden(apotheke, userFileManager, warenbestand, warenkorb, kunde);
     }
 
-    private void checkIfUserSayYes(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand, Warenkorb warenkorb, Kunde kunde) {
-        if (BenutzerUmfrage.userAuswahlJaOderNein(scanner,"Besitzen Sie bereits ein Konto? y|n")) {
-            benutzerOrdering(apotheke, userFileManager, warenbestand, warenkorb);
-
-            return;
+    private void anmelden(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand, Warenkorb warenkorb, Kunde kunde) {
+        String message = "Besitzen Sie bereits ein Konto? (y/n)";
+        if (BenutzerFragen.frageJaNein(scanner, message)) {
+            startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
+        } else {
+            registrierung(userFileManager, apotheke, warenbestand, warenkorb, kunde);
         }
-
-        ohneBenutzerForfahren(userFileManager, apotheke, warenbestand, warenkorb, kunde);
     }
 
-    private void ohneBenutzerForfahren(UserFileManager userFileManager, Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorb, Kunde kunde) {
+    private void registrierung(UserFileManager userFileManager, Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorb, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
-        if (userFileManager.kundeEmailNachBedienungSuchen(BenutzerAnmeldeDatenAbfragen.emailAbfragen(scanner))) {
-            System.out.println("Schon exestiert \n Wiedercholen Sie Ihre email und passwort");
-            benutzerOrdering(apotheke, userFileManager, warenbestand, warenkorb);
+        if (userFileManager.checkEmailVorhanden(AbfrageAnmeldedaten.userInputEmail(scanner))) {
+            System.out.println("Existiert bereits. \n Wiederholen Sie Ihre email und passwort");
+            startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
         }
         // Erstellt ein neues Kundenkonto, wenn der Benutzer noch keines hat
         kunde.setKunde(scanner);
         // kunde in db hinzufügt
         userFileManager.addKunde(kunde);
-        Nachricht.benutzerBegrussen(kunde.name);
+        Nachricht.begruessung(kunde.name);
         // Ermöglicht dem neuen Benutzer, eine Bestellung aufzugeben
         apotheke.bestellungAufgeben(warenbestand, warenkorb);
     }
 
-    private void benutzerOrdering(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand, Warenkorb warenkorb) {
+    private void startBestellprozess(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand, Warenkorb warenkorb) {
         if (apotheke.benutzerAnmeldungProzess(scanner, apotheke, userFileManager)) {
             apotheke.bestellungAufgeben(warenbestand, warenkorb);
-            // wenn nein das program beendet wird
             return;
         }
-
-        System.out.println("Sie können sich erneut registrieren \n EXIT");
+        System.out.println("Drei falsche Versuche. \nBitte wenden Sie sich an Myro.");
     }
 }

@@ -7,24 +7,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserFileManager {
+
     private static final String FILE_PATH = "src/main/resources/kunden.txt";
 
-
-
-
-    public List<Kunde> liestUsers(){
+    public List<Kunde> getKundenDatenAsList(){
         List<Kunde> kunden = new ArrayList<>();
 
         // Versucht, einen BufferedReader zu öffnen, um die Datei zu lesen
         try(BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(FILE_PATH))) {
             String line;
+
             // Liest die Datei zeilenweise
             while ((line = bufferedReader.readLine()) != null){
+
                 // Überspringe leere Zeilen
                 if (line.trim().isEmpty()) {
                     continue;
                 }
-                // Trennt die Zeile anhand des Kommas
+
                 String[] userData = line.split(",");
                 int kundennummer = Integer.parseInt(userData[0]);
                 String name = userData[1];
@@ -38,7 +38,6 @@ public class UserFileManager {
 
                 // Fügt das Kunde-Objekt zur Liste hinzu
                 kunden.add(kunde);
-
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -49,8 +48,7 @@ public class UserFileManager {
 
     public boolean isKunde(String userEmail, String userPsw){
         //System.out.println(userEmail + userPsw);
-        return liestUsers().stream().anyMatch(user -> user.getEmail().equals(userEmail) && user.getPasswort().equals(userPsw));
-
+        return getKundenDatenAsList().stream().anyMatch(user -> user.getEmail().equals(userEmail) && user.getPasswort().equals(userPsw));
     }
 
     public void addKunde(Kunde kunde) {
@@ -69,15 +67,13 @@ public class UserFileManager {
                 throw new RuntimeException(e);
             }
         }else {
-            System.out.println("Der Kunde schon exestiert ");
+            System.out.println("Es existiert bereits ein Account mit dieser Email.\n");
         }
-
-
     }
 
-    public String kundeNameNachBedienungSuchen(String email){
+    public String getKundenName(String email){
         String kundeName = "";
-        for(Kunde curKunde: liestUsers()){
+        for(Kunde curKunde: getKundenDatenAsList()){
             if (curKunde.getEmail().equals(email)) {
                 kundeName = curKunde.getName();
             }
@@ -85,9 +81,9 @@ public class UserFileManager {
         return kundeName;
     }
 
-    public boolean kundeEmailNachBedienungSuchen(String email){
+    public boolean checkEmailVorhanden(String email){
         boolean isEmail = false;
-        for(Kunde curKunde: liestUsers()){
+        for(Kunde curKunde: getKundenDatenAsList()){
             if (curKunde.getEmail().equals(email)) {
                 isEmail = true;
                 break;

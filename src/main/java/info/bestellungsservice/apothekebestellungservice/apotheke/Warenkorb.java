@@ -41,7 +41,7 @@ public class Warenkorb {
     // Gibt eine Übersicht über die Produkte im Warenkorb aus.
     public void showWarenkorb(){
         for(Map.Entry<String, Integer> produkt: produktList.entrySet()){
-            int bestellungsNummer = ProduktList.showProduktnummerByBedinung(produkt.getKey());
+            int bestellungsNummer = ProduktList.getProduktNummerByName(produkt.getKey());
             System.out.println("|-----" + produkt.getKey() + ": " + produkt.getValue() + " Stück" + " --> Bestellnummer: " + bestellungsNummer);
         }
 
