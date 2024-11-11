@@ -36,9 +36,10 @@ public class Kunde {
             System.out.println("Geben Sie Ihre Adresse");
             scanner.nextLine();
             setAdresse(scanner.nextLine());
-
-            System.out.println("Geben Sie Ihre Email");
-            setEmail(scanner.next());
+            if (getEmail() == null) {
+                System.out.println("Geben Sie Ihre Email");
+                setEmail(scanner.next());
+            }
             System.out.println("Geben Sie Ihre Passwort");
             setPasswort(scanner.next());
             setKundennummer((int) (Math.random() * 1000));
@@ -49,4 +50,5 @@ public class Kunde {
     public String toString(){
         return String.valueOf(kundennummer) + "," + name + "," + vorname + "," + adresse + "," + email + "," + passwort;
     }
+
 }

@@ -46,11 +46,15 @@ public class ApplicationRunner {
 
     private void ohneBenutzerForfahren(UserFileManager userFileManager, Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorb, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
-        if (userFileManager.kundeEmailNachBedienungSuchen(BenutzerAnmeldeDatenAbfragen.emailAbfragen(scanner))) {
+        String userEmailInput = BenutzerAnmeldeDatenAbfragen.emailAbfragen(scanner);
+        if (userFileManager.kundeEmailNachBedienungSuchen(userEmailInput)) {
             System.out.println("Schon exestiert \n Wiedercholen Sie Ihre email und passwort");
             benutzerOrdering(apotheke, userFileManager, warenbestand, warenkorb);
         }
-        // Erstellt ein neues Kundenkonto, wenn der Benutzer noch keines hat
+
+        // Setzt die eingegebene E-Mail für das neue Kundenkonto
+        kunde.setEmail(userEmailInput);
+        // Initialisiert das Kundenobjekt
         kunde.setKunde(scanner);
         // kunde in db hinzufügt
         userFileManager.addKunde(kunde);
