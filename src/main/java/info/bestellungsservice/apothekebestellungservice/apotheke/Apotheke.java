@@ -1,8 +1,11 @@
 package info.bestellungsservice.apothekebestellungservice.apotheke;
 
 import info.bestellungsservice.apothekebestellungservice.ProduktList;
+import info.bestellungsservice.apothekebestellungservice.kunde.Kunde;
 import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
+import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Logistikzentrum;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
+import info.bestellungsservice.apothekebestellungservice.paket.Paket;
 import info.bestellungsservice.apothekebestellungservice.utils.AnzeigenBeleg;
 import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
 import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
@@ -12,12 +15,11 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Apotheke implements BestellService {
-    public Warenkorb warenkorb = new Warenkorb();
+    public Warenkorb warenkorbZumVersenden = new Warenkorb();
 
 
     @Override
     public void addWarenkorb(String produkt, int anzahl) {
-
     }
 
     @Override
@@ -38,15 +40,17 @@ public class Apotheke implements BestellService {
                 betragBestellen += warenbestand.produkte.get(entry.getKey()).getPreis() * entry.getValue();
                 // Aktualisierung des Warenbestands
                 warenbestand.deleteProdukte(entry.getKey(), entry.getValue(), warenbestand.produkte);
+                warenkorbZumVersenden.addProdukte(entry.getKey(), entry.getValue());
             }
 
-        System.out.println("Hier ist Ihre Bestellung");
+            System.out.println("Hier ist Ihre Bestellung");
 
             //Anzeige des Belegs
             AnzeigenBeleg.anzeigenBeleg(produktList, warenbestand);
             System.out.println("                 Insgesamt: " + Math.round(betragBestellen * 100.0) / 100.0 + "euro");
 
     }
+
     @Override
     public void berechneStrecke() {
 
@@ -145,6 +149,7 @@ public class Apotheke implements BestellService {
             }while (BenutzerFragen.frageJaNein(scanner, "Wollen Sie noch etwas reduzieren? (y/n)"));
 
             berechneGesamtpreis(warenkorb.produktList, warenbestand);
+
         }
     }
 
@@ -179,7 +184,6 @@ public class Apotheke implements BestellService {
 
             System.out.println("Hier ist Ihre Bestellung:\n");
             warenkorb.showWarenkorb();
-
             bestellvorgangAbschliessen(scanner, warenbestand, warenkorb);
 
         }
@@ -213,14 +217,55 @@ public class Apotheke implements BestellService {
                 System.out.println("Login erfolgreich!");
                 Nachricht.begruessung(userFileManager.getKundenName(email));
                 kontoAnmeldungErfolgreich = true;
+                for (Kunde kunde: userFileManager.getKundenDatenAsList()){
+                    if (kunde.getEmail().equalsIgnoreCase(email)) {
+                        warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kunde.getKundennummer());
+                    }
+                }
             }
+
             if (counter >= 3) {
                 break;
             }
         }while (!kontoAnmeldungErfolgreich);
 
-
-
         return kontoAnmeldungErfolgreich;
+    }
+
+    public void createUndSendPaketAusWarenkorb(Warenbestand warenbestand, Warenkorb warenkorbZumVersenden,
+                                               UserFileManager userFileManager) {
+        Logistikzentrum logistikzentrum = Logistikzentrum.getInstance();
+        Paket paket = new Paket();
+
+        paket.setPaketNummer((int)(Math.random() * 1000));
+        // Berechnet und setzt das Gewicht des Pakets basierend auf dem Warenkorb
+        paket.setGewicht(warenkorbZumVersenden.getGewichtWarenkorb(warenbestand, warenkorbZumVersenden));
+
+        findeZielAdresse(userFileManager, paket, warenkorbZumVersenden);
+
+        addProdukteZumPaket(warenkorbZumVersenden, paket);
+
+         paket.showPaketZumVersenden();
+         logistikzentrum.paketeZumVersenden.add(paket);
+    }
+
+    public void findeZielAdresse(UserFileManager userFileManager,
+                                 Paket paket, Warenkorb warenkorbZumVersenden) {
+        // Durchsuche die Kundendaten, um die Zieladresse für das Paket zu finden
+        for (Kunde curKunde: userFileManager.getKundenDatenAsList()){
+            if (curKunde.getKundennummer() == warenkorbZumVersenden.getKundenummerCurrentWarenkorb()) {
+                paket.setZielAdresse(curKunde.getAdresse());
+            }
+        }
+    }
+
+    public void addProdukteZumPaket(Warenkorb warenkorbZumVersenden, Paket paket){
+        // Fügt die Produkte aus dem Warenkorb zum Paket hinzu
+        for (String produkt: warenkorbZumVersenden.produktList.keySet()){
+            String produktName;
+            produktName = produkt;
+            int produktMenge = warenkorbZumVersenden.produktList.get(produktName);
+            paket.addWaren(produktName, produktMenge);
+        }
     }
 }
