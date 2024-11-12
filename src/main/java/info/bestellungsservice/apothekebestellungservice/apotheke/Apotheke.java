@@ -40,11 +40,11 @@ public class Apotheke implements BestellService {
                 warenbestand.deleteProdukte(entry.getKey(), entry.getValue(), warenbestand.produkte);
             }
 
-        System.out.println("Hier ist Ihre Bestellung");
+        System.out.println("Hier ist Ihre Bestellung:");
 
             //Anzeige des Belegs
             AnzeigenBeleg.anzeigenBeleg(produktList, warenbestand);
-            System.out.println("                 Insgesamt: " + Math.round(betragBestellen * 100.0) / 100.0 + "euro");
+            System.out.println("                 Insgesamt: " + Math.round(betragBestellen * 100.0) / 100.0 + "€");
 
     }
     @Override
@@ -154,7 +154,7 @@ public class Apotheke implements BestellService {
         Scanner scanner = new Scanner(System.in);
         // Die Methode fragt den Benutzer, ob er etwas bestellen möchte
         if (BenutzerFragen.frageJaNein(scanner, "Wollen Sie etwas bestellen? (y/n)")) {
-            System.out.println("\n\nVerfügbare Produkte:");
+            System.out.println();
 
             // ermöglicht, mehrere Produkte zu bestellen.
             do{
@@ -171,6 +171,7 @@ public class Apotheke implements BestellService {
                     System.out.println("\nIhr Warenkorb ist aktuell leer.");
                 }else{
                     System.out.println("\nIhr aktueller Warenkorb:");
+                    System.out.println();
                     warenkorb.showWarenkorb();
                 }
 
@@ -204,6 +205,7 @@ public class Apotheke implements BestellService {
         do {
             counter += 1;
             // Benutzer wird nach E-Mail und Passwort gefragt
+            System.out.println("Geben Sie ihre Login Daten ein. \n");
             String email = AbfrageAnmeldedaten.userInputEmail(scanner);
             String psw = AbfrageAnmeldedaten.userInputPasswort(scanner);
 
