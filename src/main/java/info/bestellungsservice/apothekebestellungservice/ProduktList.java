@@ -1,7 +1,5 @@
 package info.bestellungsservice.apothekebestellungservice;
 
-
-
 public enum ProduktList {
     IBU("Ibu", 1),
     ASPIRIN("Aspirin", 2),
@@ -9,38 +7,30 @@ public enum ProduktList {
     VITAMIN_C("Vitamin_C", 4),
     VITAMIN_D("Vitamin_D", 5);
 
+    final String produktName;
+    final int produktNummer;
 
-    final String medikamenteName;
-    final int medikamenteNummer;
-
-
-    ProduktList(String medikamenteName, int medikamenteNummer) {
-        this.medikamenteName = medikamenteName;
-        this.medikamenteNummer = medikamenteNummer;
+    ProduktList(String produktName, int produktNummer) {
+        this.produktName = produktName;
+        this.produktNummer = produktNummer;
     }
 
-    public String getMedikamenteName() {
-
-        return medikamenteName;
+    public String getProduktName() {
+        return produktName;
     }
 
-    public int getMedikamenteNummer() {
-        return medikamenteNummer;
+    public int getProduktNummer() {
+        return produktNummer;
     }
 
-    public static int showProduktnummerByBedinung(String name){
+    public static int getProduktNummerByName(String name){
         int num = -1;
         for(ProduktList produkt: ProduktList.values()){
-            if (produkt.getMedikamenteName().equals(name)){
-                num = produkt.getMedikamenteNummer();
+            if (produkt.getProduktName().equals(name)){
+                num = produkt.getProduktNummer();
             }
         }
         return num;
     }
 
-    public static void showMedikamenteName() {
-        for(ProduktList produkt: ProduktList.values()){
-            System.out.println(produkt.getMedikamenteName() + "--> " + "Bestellungsnummer    " + produkt.getMedikamenteNummer() );
-        }
-    }
 }

@@ -28,22 +28,24 @@ public class Kunde {
         this.passwort = passwort;
     }
 
+
     public void setKunde(Scanner scanner){
-            System.out.println("Geben Sie Ihre Name ");
+            System.out.println("Name:");
             setName(scanner.next());
-            System.out.println("Geben Sie Ihre Vornhame");
+            System.out.println("Vorname:");
             setVorname(scanner.next());
-            System.out.println("Geben Sie Ihre Adresse");
+            System.out.println("Adresse:");
             scanner.nextLine();
             setAdresse(scanner.nextLine());
             if (getEmail() == null) {
-                System.out.println("Geben Sie Ihre Email");
+                System.out.println("Email:");
                 setEmail(scanner.next());
             }
-            System.out.println("Geben Sie Ihre Passwort");
+            System.out.println("Passwort:");
             setPasswort(scanner.next());
             setKundennummer((int) (Math.random() * 1000));
             //System.out.println("Ihre Kundenumer" + this.kundennummer);
+
     }
 
     @Override

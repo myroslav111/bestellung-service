@@ -15,11 +15,9 @@ public class AnzeigenBeleg {
             System.out.println(entry.getKey());
             System.out.println("                     " + entry.getValue() + "St.  " +
                     (warenbestand.produkte.get(entry.getKey()).getPreis()
-                            * entry.getValue()) + "euro");
+                            * entry.getValue()) + "€");
         }
-
 
         System.out.println("_____________________________________");
     }
-
 }
