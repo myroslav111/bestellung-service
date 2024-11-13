@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class BenutzerFragen {
 
     public static boolean frageJaNein(Scanner scanner, String message) {
-        System.out.println(message + "\n\n");
+        System.out.println(message + "\n");
         return Character.toLowerCase(scanner.next().charAt(0)) == 'y';
     }
 

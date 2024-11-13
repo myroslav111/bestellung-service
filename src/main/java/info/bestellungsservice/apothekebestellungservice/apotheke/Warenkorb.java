@@ -44,8 +44,8 @@ public class Warenkorb {
     public void showWarenkorb(){
         for(Map.Entry<String, Integer> produkt: produktList.entrySet()){
             int bestellungsNummer = ProduktList.getProduktNummerByName(produkt.getKey());
-            System.out.println("|-----" + produkt.getKey() + ": " + produkt.getValue() + " Stück" + " --> Bestellnummer: " + bestellungsNummer);
-        }
+            String bestellung = (produkt.getKey() + "\n").repeat(produkt.getValue());
+            System.out.println(bestellung);}
 
     }
 
