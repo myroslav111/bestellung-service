@@ -28,9 +28,12 @@ public class ApplicationRunner {
 
         //userFileManager.liestUsers();
         anmelden(apotheke, userFileManager, warenbestand, warenkorb, kunde);
+
+        versendenBestellungZumLogistik(apotheke, warenbestand, apotheke.warenkorbZumVersenden, userFileManager);
     }
 
-    private void anmelden(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand, Warenkorb warenkorb, Kunde kunde) {
+    private void anmelden(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand,
+                          Warenkorb warenkorb, Kunde kunde) {
         String message = "Besitzen Sie bereits ein Konto? (y/n)";
         if (BenutzerFragen.frageJaNein(scanner, message)) {
             startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
@@ -39,7 +42,8 @@ public class ApplicationRunner {
         }
     }
 
-    private void registrierung(UserFileManager userFileManager, Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorb, Kunde kunde) {
+    private void registrierung(UserFileManager userFileManager, Apotheke apotheke, Warenbestand warenbestand,
+                               Warenkorb warenkorb, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
         if (userFileManager.checkEmailVorhanden(AbfrageAnmeldedaten.userInputEmail(scanner))) {
             System.out.println("Existiert bereits. \n Wiederholen Sie Ihre email und passwort");
@@ -47,6 +51,8 @@ public class ApplicationRunner {
         }
         // Erstellt ein neues Kundenkonto, wenn der Benutzer noch keines hat
         kunde.setKunde(scanner);
+        apotheke.warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kunde.getKundennummer());
+        System.out.println(kunde.getKundennummer());
         // kunde in db hinzufügt
         userFileManager.addKunde(kunde);
         Nachricht.begruessung(kunde.name);
@@ -54,11 +60,19 @@ public class ApplicationRunner {
         apotheke.bestellungAufgeben(warenbestand, warenkorb);
     }
 
-    private void startBestellprozess(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand, Warenkorb warenkorb) {
+    private void startBestellprozess(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand,
+                                     Warenkorb warenkorb) {
         if (apotheke.benutzerAnmeldungProzess(scanner, apotheke, userFileManager)) {
             apotheke.bestellungAufgeben(warenbestand, warenkorb);
             return;
         }
         System.out.println("Drei falsche Versuche. \nBitte wenden Sie sich an Myro.");
     }
+
+    private void versendenBestellungZumLogistik(Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorbZumVersenden
+            , UserFileManager userFileManager) {
+        apotheke.createUndSendPaketAusWarenkorb(warenbestand, warenkorbZumVersenden, userFileManager);
+    }
+
+
 }
