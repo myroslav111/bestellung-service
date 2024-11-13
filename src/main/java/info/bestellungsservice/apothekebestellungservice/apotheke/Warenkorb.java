@@ -1,15 +1,18 @@
 package info.bestellungsservice.apothekebestellungservice.apotheke;
 
 import info.bestellungsservice.apothekebestellungservice.ProduktList;
+import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Setter
+@Getter
 public class Warenkorb {
-    //public List<String> produktList;
     public Map<String, Integer> produktList = new HashMap<>();
-
+    public int kundenummerCurrentWarenkorb;
 
     //  Fügt ein Produkt mit einer bestimmten Menge zum Warenkorb hinzu.
     public void addProdukte(String produkt, int menge){
@@ -38,12 +41,20 @@ public class Warenkorb {
 
     }
 
-    // Gibt eine Übersicht über die Produkte im Warenkorb aus.
     public void showWarenkorb(){
         for(Map.Entry<String, Integer> produkt: produktList.entrySet()){
             int bestellungsNummer = ProduktList.getProduktNummerByName(produkt.getKey());
             System.out.println("|-----" + produkt.getKey() + ": " + produkt.getValue() + " Stück" + " --> Bestellnummer: " + bestellungsNummer);
         }
 
+    }
+
+    public double getGewichtWarenkorb(Warenbestand warenbestand, Warenkorb warenkorbZumVersenden){
+        double gewichtWarenkorb = 0;
+        for(Map.Entry<String, Integer> produkt: warenkorbZumVersenden.produktList.entrySet()){
+            gewichtWarenkorb += warenbestand.produkte.get(produkt.getKey()).getGewicht() * produkt.getValue();
+        }
+
+        return Math.round(gewichtWarenkorb * 100.0) / 100.0 ;
     }
 }

@@ -36,6 +36,7 @@ public class Kunde {
         System.out.println("Name:");
         setName(scanner.next());
         System.out.println("Adresse:");
+        scanner.nextLine();
         setAdresse(scanner.nextLine());
 
         System.out.println("Geben Sie ihr Passwort ein:");
