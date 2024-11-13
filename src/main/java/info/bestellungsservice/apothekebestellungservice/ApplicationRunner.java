@@ -46,10 +46,10 @@ public class ApplicationRunner {
                                Warenkorb warenkorb, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
 
-        String userEmailInput = BenutzerAnmeldeDatenAbfragen.emailAbfragen(scanner);
-        if (userFileManager.kundeEmailNachBedienungSuchen(userEmailInput)) {
+        String userEmailInput = AbfrageAnmeldedaten.userInputEmail(scanner);
+        if (userFileManager.checkEmailVorhanden(userEmailInput)) {
             System.out.println("Existiert bereits. \n Wiederholen Sie Ihre email und passwort");
-            benutzerOrdering(apotheke, userFileManager, warenbestand, warenkorb);
+            startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
 
         }
 
