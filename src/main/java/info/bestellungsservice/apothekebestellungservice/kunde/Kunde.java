@@ -28,25 +28,29 @@ public class Kunde {
         this.passwort = passwort;
     }
 
-    public void setKunde(Scanner scanner) {
-        System.out.println("Email:");
-        setEmail(scanner.next());
-        System.out.println("Vorname:");
-        setVorname(scanner.next());
-        System.out.println("Name:");
-        setName(scanner.next());
-        System.out.println("Adresse:");
-        scanner.nextLine();
-        setAdresse(scanner.nextLine());
 
-        System.out.println("Geben Sie ihr Passwort ein:");
-        setPasswort(scanner.next());
-        setKundennummer((int) (Math.random() * 1000));
-        //System.out.println("Ihre Kundennumer" + this.kundennummer);
+    public void setKunde(Scanner scanner){
+            System.out.println("Name:");
+            setName(scanner.next());
+            System.out.println("Vorname:");
+            setVorname(scanner.next());
+            System.out.println("Adresse:");
+            scanner.nextLine();
+            setAdresse(scanner.nextLine());
+            if (getEmail() == null) {
+                System.out.println("Email:");
+                setEmail(scanner.next());
+            }
+            System.out.println("Passwort:");
+            setPasswort(scanner.next());
+            setKundennummer((int) (Math.random() * 1000));
+            //System.out.println("Ihre Kundenumer" + this.kundennummer);
+
     }
 
     @Override
     public String toString(){
         return String.valueOf(kundennummer) + "," + name + "," + vorname + "," + adresse + "," + email + "," + passwort;
     }
+
 }

@@ -45,11 +45,17 @@ public class ApplicationRunner {
     private void registrierung(UserFileManager userFileManager, Apotheke apotheke, Warenbestand warenbestand,
                                Warenkorb warenkorb, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
-        if (userFileManager.checkEmailVorhanden(AbfrageAnmeldedaten.userInputEmail(scanner))) {
+
+        String userEmailInput = BenutzerAnmeldeDatenAbfragen.emailAbfragen(scanner);
+        if (userFileManager.kundeEmailNachBedienungSuchen(userEmailInput)) {
             System.out.println("Existiert bereits. \n Wiederholen Sie Ihre email und passwort");
-            startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
+            benutzerOrdering(apotheke, userFileManager, warenbestand, warenkorb);
+
         }
-        // Erstellt ein neues Kundenkonto, wenn der Benutzer noch keines hat
+
+        // Setzt die eingegebene E-Mail für das neue Kundenkonto
+        kunde.setEmail(userEmailInput);
+        // Initialisiert das Kundenobjekt
         kunde.setKunde(scanner);
         apotheke.warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kunde.getKundennummer());
         System.out.println(kunde.getKundennummer());
