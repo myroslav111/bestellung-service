@@ -6,6 +6,8 @@ import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Logistikzentrum;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
 import info.bestellungsservice.apothekebestellungservice.paket.Paket;
+import info.bestellungsservice.apothekebestellungservice.paket.PaketBuilder;
+import info.bestellungsservice.apothekebestellungservice.paket.PaketBuilderInterface;
 import info.bestellungsservice.apothekebestellungservice.utils.AnzeigenBeleg;
 import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
 import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
@@ -237,37 +239,38 @@ public class Apotheke implements BestellService {
     public void createUndSendPaketAusWarenkorb(Warenbestand warenbestand, Warenkorb warenkorbZumVersenden,
                                                UserFileManager userFileManager) {
         Logistikzentrum logistikzentrum = Logistikzentrum.getInstance();
-        Paket paket = new Paket();
 
-        paket.setPaketNummer((int)(Math.random() * 1000));
-        // Berechnet und setzt das Gewicht des Pakets basierend auf dem Warenkorb
-        paket.setGewicht(warenkorbZumVersenden.getGewichtWarenkorb(warenbestand, warenkorbZumVersenden));
+        PaketBuilderInterface paketBuilder = new PaketBuilder()
+                .paketNummer((int)(Math.random() * 1000))
+                .gewicht(warenkorbZumVersenden.getGewichtWarenkorb(warenbestand, warenkorbZumVersenden))
+                .zielAdresse(findeZielAdresse(userFileManager, warenkorbZumVersenden));
 
-        findeZielAdresse(userFileManager, paket, warenkorbZumVersenden);
 
-        addProdukteZumPaket(warenkorbZumVersenden, paket);
+        addProdukteZumPaket(warenkorbZumVersenden, paketBuilder);
 
-         paket.showPaketZumVersenden();
-         logistikzentrum.paketeZumVersenden.add(paket);
+        Paket paket = paketBuilder.build();
+
+        paket.showPaketZumVersenden();
+        logistikzentrum.paketeZumVersenden.add(paket);
     }
 
-    public void findeZielAdresse(UserFileManager userFileManager,
-                                 Paket paket, Warenkorb warenkorbZumVersenden) {
+    public String findeZielAdresse(UserFileManager userFileManager, Warenkorb warenkorbZumVersenden) {
         // Durchsuche die Kundendaten, um die Zieladresse für das Paket zu finden
         for (Kunde curKunde: userFileManager.getKundenDatenAsList()){
             if (curKunde.getKundennummer() == warenkorbZumVersenden.getKundenummerCurrentWarenkorb()) {
-                paket.setZielAdresse(curKunde.getAdresse());
+                return curKunde.getAdresse();
             }
         }
+        return null;
     }
 
-    public void addProdukteZumPaket(Warenkorb warenkorbZumVersenden, Paket paket){
+    public void addProdukteZumPaket(Warenkorb warenkorbZumVersenden, PaketBuilderInterface paketBuilder){
         // Fügt die Produkte aus dem Warenkorb zum Paket hinzu
         for (String produkt: warenkorbZumVersenden.produktList.keySet()){
             String produktName;
             produktName = produkt;
             int produktMenge = warenkorbZumVersenden.produktList.get(produktName);
-            paket.addWaren(produktName, produktMenge);
+            paketBuilder.addWare(produktName, produktMenge);
         }
     }
 }
