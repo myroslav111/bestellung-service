@@ -2,6 +2,7 @@ package info.bestellungsservice.apothekebestellungservice.apotheke;
 
 import info.bestellungsservice.apothekebestellungservice.ProduktList;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
+import info.bestellungsservice.apothekebestellungservice.utils.UserMessages;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,19 +25,19 @@ public class Warenkorb {
     // Löscht alle Produkte aus dem Warenkorb.
     public void clearProdukt(){
         produktList.clear();
-        System.out.println("Wir haben alle aus Ihrem Warenkorb entfernt");
+        System.out.println(UserMessages.warenkorbEntferntBestaetigungText());
 
     }
 
     public void aktualisiereBestandNachBestellung(String nameMedikament, int menge){
         // Überprüft, ob die gewünschte Menge des Medikaments im Bestand ausreicht.
         if (produktList.get(nameMedikament) < menge || produktList.get(nameMedikament) - menge < 0){
-            System.out.println("Sie haben weniger in der Bestellung");
+            System.out.println(UserMessages.reduzierteBestellmengeText());
         } else {
             // Aktualisiert den Bestand des Medikaments mit der neuen Menge,
             // wenn ausreichend Bestand vorhanden ist.
             produktList.put(nameMedikament, menge);
-            System.out.println("Hat gearbeitet");
+            System.out.println(UserMessages.statusText());
         }
 
     }
@@ -45,7 +46,8 @@ public class Warenkorb {
         for(Map.Entry<String, Integer> produkt: produktList.entrySet()){
             int bestellungsNummer = ProduktList.getProduktNummerByName(produkt.getKey());
             String bestellung = (produkt.getKey() + "\n").repeat(produkt.getValue());
-            System.out.println(bestellung);}
+            System.out.println(bestellung);
+        }
 
     }
 

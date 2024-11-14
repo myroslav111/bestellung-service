@@ -6,5 +6,4 @@ public interface PaketBuilderInterface extends Builder<Paket> {
     PaketBuilderInterface zielAdresse(String zielAdresse);
     void addWare(String waren, int menge);
     PaketBuilderInterface zugestellt(boolean zugestellt);
-
 }

@@ -11,10 +11,11 @@ public class PaketBuilder implements PaketBuilderInterface{
     private boolean zugestellt;
     private List<HashMap<String, Integer>> paketInhalt = new ArrayList<>();
 
+    // Setzt die Paketnummer und gibt den Builder selbst zurück (für das fluide Design)
     @Override
     public PaketBuilderInterface paketNummer(int paketNummer) {
         this.paketNummer = paketNummer;
-        return this;
+        return this; // Rückgabe des Builders ermöglicht das Verketten von Methoden
     }
 
     @Override
@@ -32,8 +33,8 @@ public class PaketBuilder implements PaketBuilderInterface{
     @Override
     public void addWare(String waren, int menge) {
         HashMap<String, Integer> produkt = new HashMap<>();
-        produkt.put(waren, menge);
-        this.paketInhalt.add(produkt);
+        produkt.put(waren, menge);// Das Produkt und die Menge werden im Map gespeichert
+        this.paketInhalt.add(produkt);// Das Produkt wird zur Liste des Paketinhalt hinzugefügt
     }
 
     @Override
@@ -49,6 +50,7 @@ public class PaketBuilder implements PaketBuilderInterface{
         paket.setGewicht(paketGewicht);
         paket.setZielAdresse(zielAdresse);
         paket.setPaketInhalt(paketInhalt);
+        paket.setZugestellt(zugestellt);
         return paket;
     }
 }
