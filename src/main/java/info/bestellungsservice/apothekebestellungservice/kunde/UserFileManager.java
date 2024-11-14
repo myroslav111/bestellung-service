@@ -1,5 +1,7 @@
 package info.bestellungsservice.apothekebestellungservice.kunde;
 
+import info.bestellungsservice.apothekebestellungservice.utils.UserMessages;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -67,7 +69,7 @@ public class UserFileManager {
                 throw new RuntimeException(e);
             }
         }else {
-            System.out.println("Es existiert bereits ein Account mit dieser Email.\n");
+            System.out.println(UserMessages.emailExistiertSchonText());
         }
     }
 
@@ -79,6 +81,16 @@ public class UserFileManager {
             }
         }
         return kundeName;
+    }
+
+    public String getKundenVorname(String email){
+        String kundeVorname = "";
+        for(Kunde curKunde: getKundenDatenAsList()){
+            if (curKunde.getEmail().equals(email)) {
+                kundeVorname = curKunde.getVorname();
+            }
+        }
+        return kundeVorname;
     }
 
     public boolean checkEmailVorhanden(String email){

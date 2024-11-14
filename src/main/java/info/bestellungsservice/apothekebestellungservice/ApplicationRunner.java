@@ -8,6 +8,7 @@ import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbe
 import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
 import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
 import info.bestellungsservice.apothekebestellungservice.utils.Nachricht;
+import info.bestellungsservice.apothekebestellungservice.utils.UserMessages;
 
 import java.util.Scanner;
 
@@ -34,7 +35,7 @@ public class ApplicationRunner {
 
     private void anmelden(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand,
                           Warenkorb warenkorb, Kunde kunde) {
-        String message = "Besitzen Sie bereits ein Konto? (y/n)";
+        String message = UserMessages.kontoAbfrageText();
         if (BenutzerFragen.frageJaNein(scanner, message)) {
             startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
         } else {
@@ -45,10 +46,9 @@ public class ApplicationRunner {
     private void registrierung(UserFileManager userFileManager, Apotheke apotheke, Warenbestand warenbestand,
                                Warenkorb warenkorb, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
-
         String userEmailInput = AbfrageAnmeldedaten.userInputEmail(scanner);
         if (userFileManager.checkEmailVorhanden(userEmailInput)) {
-            System.out.println("Existiert bereits. \n Wiederholen Sie Ihre email und passwort");
+            System.out.println(UserMessages.accountExistiertText());
             startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
 
         }
@@ -61,7 +61,7 @@ public class ApplicationRunner {
         System.out.println(kunde.getKundennummer());
         // kunde in db hinzufügt
         userFileManager.addKunde(kunde);
-        Nachricht.begruessung(kunde.name);
+        Nachricht.begruessung(kunde.name, kunde.vorname);
         // Ermöglicht dem neuen Benutzer, eine Bestellung aufzugeben
         apotheke.bestellungAufgeben(warenbestand, warenkorb);
     }
@@ -72,7 +72,7 @@ public class ApplicationRunner {
             apotheke.bestellungAufgeben(warenbestand, warenkorb);
             return;
         }
-        System.out.println("Drei falsche Versuche. \nBitte wenden Sie sich an Myro.");
+        System.out.println(UserMessages.versuchLimitErreichtText());
     }
 
     private void versendenBestellungZumLogistik(Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorbZumVersenden
