@@ -15,7 +15,20 @@ import java.util.Scanner;
 
 public class Apotheke implements BestellService {
     public Warenkorb warenkorbZumVersenden = new Warenkorb();
+    public BenutzerService benutzerService = new BenutzerService();
+    public Bestellverfahren bestellverfahren = new Bestellverfahren();
+    public PaketVersandService paketVersandService = new PaketVersandService();
+    private static Apotheke instance;
 
+    private Apotheke() {}
+
+    public static Apotheke getInstance() {
+        if (Apotheke.instance == null) {
+            Apotheke.instance = new Apotheke();
+            return Apotheke.instance;
+        }
+        return Apotheke.instance;
+    }
 
     @Override
     public void addWarenkorb(String produkt, int anzahl) {
@@ -26,29 +39,10 @@ public class Apotheke implements BestellService {
 
     }
 
-    // produktList, die die Produkte als Schlüssel
-    // (Strings) und die zu bestellenden Mengen als Werte (Integers) enthält.
-    // warenbestand die Informationen über die verfügbaren Produkte und deren Preise enthält
-    // der Klasse AnzeigenBeleg, die für die Anzeige des Bestellbelegs zuständig ist.
+
     @Override
     public void berechneGesamtpreis(Map<String, Integer> produktList,
                                     Warenbestand warenbestand) {
-            double betragBestellen = 0;
-            //Iterieren über die Produktliste, um den Gesamtpreis zu berechnen.
-            for(Map.Entry<String, Integer> entry: produktList.entrySet()){
-                betragBestellen += warenbestand.produkte.get(entry.getKey()).getPreis() * entry.getValue();
-                // Aktualisierung des Warenbestands
-                warenbestand.deleteProdukte(entry.getKey(), entry.getValue(), warenbestand.produkte);
-                warenkorbZumVersenden.addProdukte(entry.getKey(), entry.getValue());
-            }
-
-        System.out.println(UserMessages.bestellungsBestaetigungText());
-
-            //Anzeige des Belegs
-            AnzeigenBeleg.anzeigenBeleg(produktList, warenbestand);
-
-            System.out.println(UserMessages.gesamtbetragText(Math.round(betragBestellen * 100.0) / 100.0));
-
     }
 
     @Override
@@ -61,215 +55,4 @@ public class Apotheke implements BestellService {
 
     }
 
-    public String sucheMedikamentNachEingabe(Scanner scanner){
-        String nameMedikament = "";
-        // Konsumiere den Zeilenumbruch
-        scanner.nextLine();
-        //entscheidet auf Grundlage von scanner.hasNextInt(), welche Methode aufgerufen wird:
-        Object inputUser = scanner.hasNextInt() ? scanner.nextInt() : scanner.nextLine();
-
-        for(ProduktList produkt: ProduktList.values()){
-            // Diese Bedingung überprüft, ob inputUser eine Instanz der Klasse Number ist.
-            // Da inputUser ein Object sein kann (entweder ein Integer oder String),
-            // stellt dies sicher, dass die Eingabe tatsächlich eine Zahl ist und nicht z.B. ein String.
-            // Falls inputUser eine Zahl ist, wird es in Number umgewandelt
-            //intValue() ist eine Methode der Klasse Number, die den Number-Wert in einen int konvertiert.
-            //Prüft, ob inputUser eine Zahl ist.
-            //Konvertiert inputUser (falls es eine Zahl ist) in einen int.
-            //Vergleicht den Wert dieser Zahl mit der Medikamentennummer des Produkts.
-
-            // Überprüfe, ob inputUser eine Zahl ist
-            if(inputUser instanceof Number && ((Number)inputUser).intValue() == produkt.getProduktNummer()){
-                // Setze den Medikamentennamen, wenn die Nummer übereinstimmt
-                nameMedikament = produkt.getProduktName();
-            }else if (produkt.getProduktName().trim().equalsIgnoreCase(inputUser.toString().trim())){
-
-                // Setze den Medikamentennamen, wenn der Name übereinstimmt
-                nameMedikament = produkt.getProduktName();
-            }else {
-                System.out.println("\n \n");
-            }
-        }
-        return nameMedikament;
-    }
-
-    public void pruefeUndAktualisiereMedikamentImWarenkorb(String nameMedikament, int menge, Warenbestand warenbestand, Warenkorb warenkorb){
-
-        // Wenn der Benutzer bereits ein Medikament hinzugefügt hat,
-        // ermöglicht dies eine weitere Bearbeitung des vorhandenen Medikaments
-        if (warenkorb.produktList.containsKey(nameMedikament)) {
-
-            if (warenbestand.produkte.get(nameMedikament).getMenge() - menge - warenkorb.produktList.get(nameMedikament) >= 0) {
-                warenkorb.addProdukte(nameMedikament, warenkorb.produktList.get(nameMedikament) + menge);
-            }else {
-                System.out.println(UserMessages.lagerbestandWarnungText());
-            }
-        }else {
-            if (!(warenbestand.produkte.get(nameMedikament).getMenge() - menge < 0)) {
-                warenkorb.addProdukte(nameMedikament, menge);
-            }else {
-                System.out.println(UserMessages.lagerbestandWarnungMitVerfuegbarkeitText(warenbestand.produkte.get(nameMedikament).getMenge()) );
-            }
-
-        }
-    }
-
-    public void bestellvorgangAbschliessen(Scanner scanner,Warenbestand warenbestand, Warenkorb warenkorb){
-        // Bestellbestätigung
-        // Der Benutzer wird gefragt, ob er die Bestellung bestätigen möchte.
-        // Wenn der Benutzer zustimmt, wird die Methode berechneGesamtpreis aufgerufen,
-        // um den Gesamtpreis der Bestellung zu berechnen und den Beleg anzuzeigen.
-
-        if (BenutzerFragen.frageJaNein(scanner, UserMessages.bestellBestaetigungsFrageText())) {
-            berechneGesamtpreis(warenkorb.produktList, warenbestand);
-        }else if(BenutzerFragen.frageJaNein(scanner, UserMessages.bestellAenderungsOptionText())) {
-            // Wenn der Benutzer die gesamte Bestellung abbrechen möchte,
-            // wird der Warenkorb geleert und der aktuelle (leere) Warenkorb angezeigt.
-            warenkorb.clearProdukt();
-            warenkorb.showWarenkorb();
-        }else{
-            if (BenutzerFragen.frageJaNein(scanner, UserMessages.frageHinzufuegenOderReduzierenText())) {
-                bestellungAufgeben(warenbestand, warenkorb);
-            }
-            do {
-                // Zeigt den aktuellen Inhalt des Warenkorbs an.
-                warenkorb.showWarenkorb();
-                System.out.println(UserMessages.reduktionsAnfrageProduktText());
-
-                String medikamentName = sucheMedikamentNachEingabe(scanner);
-
-                System.out.println(UserMessages.anfrageReduzierenMengeText(medikamentName));
-                int menge = scanner.nextInt();
-
-                // Aktualisiert die Menge des ausgewählten Produkts im Warenkorb.
-                warenkorb.aktualisiereBestandNachBestellung(medikamentName, menge);
-
-
-                // Fragt den Benutzer, ob er weitere Produkte reduzieren möchte.
-            }while (BenutzerFragen.frageJaNein(scanner, UserMessages.frageObWeiterReduziertWerdenSollText()));
-
-            berechneGesamtpreis(warenkorb.produktList, warenbestand);
-
-        }
-    }
-
-    // warenbestand die Informationen über die verfügbaren Produkte enthält.
-    // warenkorb die Produkte, die der Benutzer bestellt hat
-    public void bestellungAufgeben(Warenbestand warenbestand, Warenkorb warenkorb) {
-        Scanner scanner = new Scanner(System.in);
-        // Die Methode fragt den Benutzer, ob er etwas bestellen möchte
-        if (BenutzerFragen.frageJaNein(scanner, UserMessages.frageObBestelltWerdenSollText())) {
-            System.out.println();
-
-            // ermöglicht, mehrere Produkte zu bestellen.
-            do{
-                // Jedes Produkt wird durch einen Aufruf angezeigt
-                warenbestand.showWarenBestand();
-                System.out.println(UserMessages.frageNachGewuenschtenProduktText());
-                String nameMedikament = sucheMedikamentNachEingabe(scanner);
-                System.out.println(UserMessages.frageNachGewuenschterAnzahlText());
-                int menge = scanner.nextInt();
-
-                pruefeUndAktualisiereMedikamentImWarenkorb(nameMedikament, menge, warenbestand, warenkorb);
-
-                if (warenkorb.produktList.isEmpty()) {
-                    System.out.println(UserMessages.leerWarenkorbNachrichtText());
-                }else{
-                    System.out.println(UserMessages.warenkorbStatusText());
-                    System.out.println();
-                    warenkorb.showWarenkorb();
-                }
-
-            }
-            while (BenutzerFragen.frageJaNein(scanner, UserMessages.fortfahrenMitBestellungText()));
-
-            System.out.println(UserMessages.bestellungAnzeigeText());
-            warenkorb.showWarenkorb();
-            bestellvorgangAbschliessen(scanner, warenbestand, warenkorb);
-
-        }
-
-    }
-
-    public boolean login(String email, String psw) {
-        // Erstellt eine Instanz von UserFileManager, um auf die Benutzerdaten zuzugreifen
-        UserFileManager userFileManager = new UserFileManager();
-
-        if (userFileManager.isKunde(email, psw)) {
-            return true;
-        }else {
-            System.out.println(UserMessages.falscheLoginDatenText());
-            return false;
-        }
-    }
-
-    public boolean benutzerAnmeldungProzess(Scanner scanner,Apotheke apotheke, UserFileManager userFileManager){
-        int counter = 0;
-        boolean kontoAnmeldungErfolgreich = false;
-        do {
-            counter += 1;
-            // Benutzer wird nach E-Mail und Passwort gefragt
-            System.out.println(UserMessages.loginDatenAbfrageText());
-            String email = AbfrageAnmeldedaten.userInputEmail(scanner);
-            String psw = AbfrageAnmeldedaten.userInputPasswort(scanner);
-
-            // Überprüft die Anmeldedaten
-            if (apotheke.login(email, psw)) {
-                // Sucht nach dem Namen des Benutzers basierend auf der E-Mail
-                System.out.println(UserMessages.loginErfolgreichText());
-                Nachricht.begruessung(userFileManager.getKundenName(email), userFileManager.getKundenVorname(email));
-                kontoAnmeldungErfolgreich = true;
-                for (Kunde kunde: userFileManager.getKundenDatenAsList()){
-                    if (kunde.getEmail().equalsIgnoreCase(email)) {
-                        warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kunde.getKundennummer());
-                    }
-                }
-            }
-
-            if (counter >= 3) {
-                break;
-            }
-        }while (!kontoAnmeldungErfolgreich);
-
-        return kontoAnmeldungErfolgreich;
-    }
-
-    public void createUndSendPaketAusWarenkorb(Warenbestand warenbestand, Warenkorb warenkorbZumVersenden,
-                                               UserFileManager userFileManager) {
-        Logistikzentrum logistikzentrum = Logistikzentrum.getInstance();
-
-        PaketBuilderInterface paketBuilder = new PaketBuilder()
-                .paketNummer((int)(Math.random() * 1000))
-                .gewicht(warenkorbZumVersenden.getGewichtWarenkorb(warenbestand, warenkorbZumVersenden))
-                .zielAdresse(findeZielAdresse(userFileManager, warenkorbZumVersenden))
-                .zugestellt(false);
-
-
-        addProdukteZumPaket(warenkorbZumVersenden, paketBuilder);
-
-        Paket paket = paketBuilder.build();
-
-        paket.showPaketZumVersenden();
-        logistikzentrum.paketeZumVersenden.add(paket);
-    }
-
-    public String findeZielAdresse(UserFileManager userFileManager, Warenkorb warenkorbZumVersenden) {
-        // Durchsuche die Kundendaten, um die Zieladresse für das Paket zu finden
-        for (Kunde curKunde: userFileManager.getKundenDatenAsList()){
-            if (curKunde.getKundennummer() == warenkorbZumVersenden.getKundenummerCurrentWarenkorb()) {
-                return curKunde.getAdresse();
-            }
-        }
-        return null;
-    }
-
-    public void addProdukteZumPaket(Warenkorb warenkorbZumVersenden, PaketBuilderInterface paketBuilder){
-        // Fügt die Produkte aus dem Warenkorb zum Paket hinzu
-        for (String produkt: warenkorbZumVersenden.produktList.keySet()){
-            String produktName;
-            produktName = produkt;
-            int produktMenge = warenkorbZumVersenden.produktList.get(produktName);
-            paketBuilder.addWare(produktName, produktMenge);
-        }
-    }
 }

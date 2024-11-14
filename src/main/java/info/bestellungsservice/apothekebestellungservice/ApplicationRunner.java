@@ -1,6 +1,7 @@
 package info.bestellungsservice.apothekebestellungservice;
 
 import info.bestellungsservice.apothekebestellungservice.apotheke.Apotheke;
+import info.bestellungsservice.apothekebestellungservice.apotheke.BenutzerService;
 import info.bestellungsservice.apothekebestellungservice.apotheke.Warenkorb;
 import info.bestellungsservice.apothekebestellungservice.kunde.Kunde;
 import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
@@ -21,7 +22,7 @@ public class ApplicationRunner {
     }
 
     public void run() {
-        Apotheke apotheke = new Apotheke();
+        Apotheke apotheke = Apotheke.getInstance();
         Warenkorb warenkorb = new Warenkorb();
         Warenbestand warenbestand = new Warenbestand();
         UserFileManager userFileManager = new UserFileManager();
@@ -63,13 +64,13 @@ public class ApplicationRunner {
         userFileManager.addKunde(kunde);
         Nachricht.begruessung(kunde.name, kunde.vorname);
         // Ermöglicht dem neuen Benutzer, eine Bestellung aufzugeben
-        apotheke.bestellungAufgeben(warenbestand, warenkorb);
+        apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
     }
 
     private void startBestellprozess(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand,
                                      Warenkorb warenkorb) {
-        if (apotheke.benutzerAnmeldungProzess(scanner, apotheke, userFileManager)) {
-            apotheke.bestellungAufgeben(warenbestand, warenkorb);
+        if (apotheke.benutzerService.benutzerAnmeldungProzess(scanner, apotheke, userFileManager)) {
+            apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
             return;
         }
         System.out.println(UserMessages.versuchLimitErreichtText());
@@ -77,7 +78,7 @@ public class ApplicationRunner {
 
     private void versendenBestellungZumLogistik(Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorbZumVersenden
             , UserFileManager userFileManager) {
-        apotheke.createUndSendPaketAusWarenkorb(warenbestand, warenkorbZumVersenden, userFileManager);
+        apotheke.paketVersandService.createUndSendPaketAusWarenkorb(warenbestand, warenkorbZumVersenden, userFileManager);
     }
 
 
