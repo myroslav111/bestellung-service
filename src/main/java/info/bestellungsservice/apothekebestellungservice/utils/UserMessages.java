@@ -1,10 +1,5 @@
 package info.bestellungsservice.apothekebestellungservice.utils;
 
-import lombok.Getter;
-
-import java.util.HashMap;
-
-
 public class UserMessages {
 
    public static String apothekenBegruessungText(String kundeName, String vorname){
