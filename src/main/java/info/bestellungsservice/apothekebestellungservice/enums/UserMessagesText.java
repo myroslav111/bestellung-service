@@ -28,16 +28,7 @@ public enum UserMessagesText {
     REDUZIERTE_BESTELLMENGE("Sie haben weniger in der Bestellung"),
     STATUS("Hat gearbeitet"),
     EMAIL_EXISTIERT_SCHON("Es existiert bereits ein Account mit dieser Email.\n"),
-    ACCOUNT_EXISTIERT("Existiert bereits. \n Wiederholen Sie Ihre email und passwort"),
-    NAME("Name:"),
-    VORNAME("Vorname:"),
-    ADRESSE("Adresse:"),
-    EMAIL("Email:"),
-    PASSWORT("Passwort:"),
-    PAKETNUMMER("Paketnummer: "),
-    GEWICHT("Gewicht: "),
-    ZIELADRESSE("Zieladresse: "),
-    STATUS_LIEFERUNG("Status der Lieferung: ");
+    ACCOUNT_EXISTIERT("Existiert bereits. \n Wiederholen Sie Ihre email und passwort");
 
 
     private final String message;

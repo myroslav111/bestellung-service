@@ -2,7 +2,7 @@ package info.bestellungsservice.apothekebestellungservice.kunde;
 
 
 
-import info.bestellungsservice.apothekebestellungservice.enums.UserMessagesText;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,18 +31,18 @@ public class Kunde {
 
 
     public void setKunde(Scanner scanner){
-            System.out.println(UserMessagesText.NAME);
+            System.out.println("Name:");
             setName(scanner.next());
-            System.out.println(UserMessagesText.VORNAME);
+            System.out.println("Vorname:");
             setVorname(scanner.next());
-            System.out.println(UserMessagesText.ADRESSE);
+            System.out.println("Adresse:");
             scanner.nextLine();
             setAdresse(scanner.nextLine());
             if (getEmail() == null) {
-                System.out.println(UserMessagesText.EMAIL);
+                System.out.println("Email:");
                 setEmail(scanner.next());
             }
-            System.out.println(UserMessagesText.PASSWORT);
+            System.out.println("Passwort:");
             setPasswort(scanner.next());
             setKundennummer((int) (Math.random() * 1000));
             //System.out.println(UserMessages.kundenDatenAbfrageText()[5] + this.kundennummer);
