@@ -1,6 +1,6 @@
 package info.bestellungsservice.apothekebestellungservice.logistikzentrum;
 
-import info.bestellungsservice.apothekebestellungservice.ProduktList;
+import info.bestellungsservice.apothekebestellungservice.enums.ProduktList;
 import info.bestellungsservice.apothekebestellungservice.produkt.Produkt;
 
 

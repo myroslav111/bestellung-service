@@ -1,5 +1,8 @@
-package info.bestellungsservice.apothekebestellungservice;
+package info.bestellungsservice.apothekebestellungservice.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ProduktList {
     IBU("Ibu", 1),
     ASPIRIN("Aspirin", 2),
@@ -13,14 +16,6 @@ public enum ProduktList {
     ProduktList(String produktName, int produktNummer) {
         this.produktName = produktName;
         this.produktNummer = produktNummer;
-    }
-
-    public String getProduktName() {
-        return produktName;
-    }
-
-    public int getProduktNummer() {
-        return produktNummer;
     }
 
     public static int getProduktNummerByName(String name){

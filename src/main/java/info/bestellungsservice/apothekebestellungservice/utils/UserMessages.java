@@ -132,7 +132,7 @@ public class UserMessages {
    }
 
    public static String[] kundenDatenAbfrageText(){
-       return new String[]{"Name:", "Vorname:", "Adresse:", "Email:", "Passwort:", "Ihre Kundenumer" };
+       return new String[]{"Name:", "Vorname:", "Adresse:", "Email:", "Passwort:", "Ihre Kundenummer" };
    }
 
    public static String[] paketInfoText(){

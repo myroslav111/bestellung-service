@@ -1,10 +1,12 @@
 package info.bestellungsservice.apothekebestellungservice.apotheke;
 
-import info.bestellungsservice.apothekebestellungservice.ProduktList;
+import info.bestellungsservice.apothekebestellungservice.enums.Farbcodes;
+import info.bestellungsservice.apothekebestellungservice.enums.ProduktList;
+import info.bestellungsservice.apothekebestellungservice.enums.UserMessagesText;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
 import info.bestellungsservice.apothekebestellungservice.utils.AnzeigenBeleg;
 import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
-import info.bestellungsservice.apothekebestellungservice.utils.UserMessages;
+
 
 import java.util.Map;
 import java.util.Scanner;
@@ -17,32 +19,32 @@ public class Bestellverfahren {
     public void bestellungAufgeben(Warenbestand warenbestand, Warenkorb warenkorb) {
         //Scanner scanner = new Scanner(System.in);
         // Die Methode fragt den Benutzer, ob er etwas bestellen möchte
-        if (BenutzerFragen.frageJaNein(scanner, UserMessages.frageObBestelltWerdenSollText())) {
+        if (BenutzerFragen.frageJaNein(scanner, UserMessagesText.FRAGE_OB_BESTELLT_WERDEN_SOL.toString())) {
             System.out.println();
 
             // ermöglicht, mehrere Produkte zu bestellen.
             do{
                 // Jedes Produkt wird durch einen Aufruf angezeigt
                 warenbestand.showWarenBestand();
-                System.out.println(UserMessages.frageNachGewuenschtenProduktText());
+                System.out.println(UserMessagesText.FRAGE_NACH_GEWUENSCHTEM_PRODUKT);
                 String nameMedikament = sucheMedikamentNachEingabe();
-                System.out.println(UserMessages.frageNachGewuenschterAnzahlText());
+                System.out.println(UserMessagesText.FRAGE_NACH_GEWUENSCHTER_ANZAHL);
                 int menge = scanner.nextInt();
 
                 pruefeUndAktualisiereMedikamentImWarenkorb(nameMedikament, menge, warenbestand, warenkorb);
 
                 if (warenkorb.produktList.isEmpty()) {
-                    System.out.println(UserMessages.leerWarenkorbNachrichtText());
+                    System.out.println(UserMessagesText.LEER_WARENKORB_NACHRICHT);
                 }else{
-                    System.out.println(UserMessages.warenkorbStatusText());
+                    System.out.println(UserMessagesText.WARENKORB_STATUS);
                     System.out.println();
                     warenkorb.showWarenkorb();
                 }
 
             }
-            while (BenutzerFragen.frageJaNein(scanner, UserMessages.fortfahrenMitBestellungText()));
+            while (BenutzerFragen.frageJaNein(scanner, UserMessagesText.FORTFAHREN_MIT_BESTELLUNG.toString()));
 
-            System.out.println(UserMessages.bestellungAnzeigeText());
+            System.out.println(UserMessagesText.BESTELLUNG_ANZEIGE);
             warenkorb.showWarenkorb();
             bestellvorgangAbschliessen(warenbestand, warenkorb);
 
@@ -76,7 +78,7 @@ public class Bestellverfahren {
                 // Setze den Medikamentennamen, wenn der Name übereinstimmt
                 nameMedikament = produkt.getProduktName();
             }else {
-                System.out.println("\n \n");
+                System.out.println();
             }
         }
         return nameMedikament;
@@ -91,13 +93,16 @@ public class Bestellverfahren {
             if (warenbestand.produkte.get(nameMedikament).getMenge() - menge - warenkorb.produktList.get(nameMedikament) >= 0) {
                 warenkorb.addProdukte(nameMedikament, warenkorb.produktList.get(nameMedikament) + menge);
             }else {
-                System.out.println(UserMessages.lagerbestandWarnungText());
+                String lagerbestandWarnungText = UserMessagesText.LAGERBESTAND_WARNUNG.toString();
+                System.out.println(Farbcodes.ROT.formatText(lagerbestandWarnungText));
             }
         }else {
             if (!(warenbestand.produkte.get(nameMedikament).getMenge() - menge < 0)) {
                 warenkorb.addProdukte(nameMedikament, menge);
             }else {
-                System.out.println(UserMessages.lagerbestandWarnungMitVerfuegbarkeitText(warenbestand.produkte.get(nameMedikament).getMenge()) );
+                String lagerbestandWarnungMitVerfuegbarkeitText = UserMessagesText.LAGERBESTAND_WARNUNG_MIT_VERFUEGBARKEIT
+                        .format(warenbestand.produkte.get(nameMedikament).getMenge());
+                System.out.println(Farbcodes.ROT.formatText(lagerbestandWarnungMitVerfuegbarkeitText));
             }
 
         }
@@ -109,25 +114,25 @@ public class Bestellverfahren {
         // Wenn der Benutzer zustimmt, wird die Methode berechneGesamtpreis aufgerufen,
         // um den Gesamtpreis der Bestellung zu berechnen und den Beleg anzuzeigen.
 
-        if (BenutzerFragen.frageJaNein(scanner, UserMessages.bestellBestaetigungsFrageText())) {
+        if (BenutzerFragen.frageJaNein(scanner, UserMessagesText.BESTELL_BESTAETIGUNGS_FRAGE.toString())) {
             berechneGesamtpreis(warenkorb.produktList, warenbestand);
-        }else if(BenutzerFragen.frageJaNein(scanner, UserMessages.bestellAenderungsOptionText())) {
+        }else if(BenutzerFragen.frageJaNein(scanner, UserMessagesText.BESTELL_AENDERUNGS_OPTION.toString())) {
             // Wenn der Benutzer die gesamte Bestellung abbrechen möchte,
             // wird der Warenkorb geleert und der aktuelle (leere) Warenkorb angezeigt.
             warenkorb.clearProdukt();
             warenkorb.showWarenkorb();
         }else{
-            if (BenutzerFragen.frageJaNein(scanner, UserMessages.frageHinzufuegenOderReduzierenText())) {
+            if (BenutzerFragen.frageJaNein(scanner, UserMessagesText.FRAGE_HINZUFUEGEN_ODER_REDUZIEREN.toString())) {
                 bestellungAufgeben(warenbestand, warenkorb);
             }
             do {
                 // Zeigt den aktuellen Inhalt des Warenkorbs an.
                 warenkorb.showWarenkorb();
-                System.out.println(UserMessages.reduktionsAnfrageProduktText());
+                System.out.println(UserMessagesText.REDUKTIONS_ANFRAGE_PRODUKT);
 
                 String medikamentName = sucheMedikamentNachEingabe();
 
-                System.out.println(UserMessages.anfrageReduzierenMengeText(medikamentName));
+                System.out.println(UserMessagesText.ANFRAGE_REDUZIEREN_MENGE.format(medikamentName));
                 int menge = scanner.nextInt();
 
                 // Aktualisiert die Menge des ausgewählten Produkts im Warenkorb.
@@ -135,7 +140,7 @@ public class Bestellverfahren {
 
 
                 // Fragt den Benutzer, ob er weitere Produkte reduzieren möchte.
-            }while (BenutzerFragen.frageJaNein(scanner, UserMessages.frageObWeiterReduziertWerdenSollText()));
+            }while (BenutzerFragen.frageJaNein(scanner, UserMessagesText.FRAGE_OB_WEITER_REDUZIERT_WERDEN_SOL.toString()));
 
             berechneGesamtpreis(warenkorb.produktList, warenbestand);
 
@@ -158,13 +163,13 @@ public class Bestellverfahren {
             apotheke.warenkorbZumVersenden.addProdukte(entry.getKey(), entry.getValue());
         }
 
-        System.out.println(UserMessages.bestellungsBestaetigungText());
+        System.out.println(UserMessagesText.BESTELL_BESTAETIGUNGS_FRAGE);
 
         //Anzeige des Belegs
         AnzeigenBeleg.anzeigenBeleg(produktList, warenbestand);
 
-        System.out.println(UserMessages.gesamtbetragText(Math.round(betragBestellen * 100.0) / 100.0));
-
+        String gesamtbetragText = UserMessagesText.GESAMTBETRAG.format(Math.round(betragBestellen * 100.0) / 100.0);
+        System.out.println(Farbcodes.HELLBLAU.formatText(gesamtbetragText));
     }
 
 }

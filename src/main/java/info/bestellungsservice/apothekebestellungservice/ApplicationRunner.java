@@ -1,15 +1,15 @@
 package info.bestellungsservice.apothekebestellungservice;
 
 import info.bestellungsservice.apothekebestellungservice.apotheke.Apotheke;
-import info.bestellungsservice.apothekebestellungservice.apotheke.BenutzerService;
 import info.bestellungsservice.apothekebestellungservice.apotheke.Warenkorb;
+import info.bestellungsservice.apothekebestellungservice.enums.Farbcodes;
+import info.bestellungsservice.apothekebestellungservice.enums.UserMessagesText;
 import info.bestellungsservice.apothekebestellungservice.kunde.Kunde;
 import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
 import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
 import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
 import info.bestellungsservice.apothekebestellungservice.utils.Nachricht;
-import info.bestellungsservice.apothekebestellungservice.utils.UserMessages;
 
 import java.util.Scanner;
 
@@ -36,7 +36,7 @@ public class ApplicationRunner {
 
     private void anmelden(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand,
                           Warenkorb warenkorb, Kunde kunde) {
-        String message = UserMessages.kontoAbfrageText();
+        String message = UserMessagesText.KONTO_ABFRAGE.toString();
         if (BenutzerFragen.frageJaNein(scanner, message)) {
             startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
         } else {
@@ -49,7 +49,7 @@ public class ApplicationRunner {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
         String userEmailInput = AbfrageAnmeldedaten.userInputEmail(scanner);
         if (userFileManager.checkEmailVorhanden(userEmailInput)) {
-            System.out.println(UserMessages.accountExistiertText());
+            System.out.println(UserMessagesText.ACCOUNT_EXISTIERT);
             startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
 
         }
@@ -73,13 +73,12 @@ public class ApplicationRunner {
             apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
             return;
         }
-        System.out.println(UserMessages.versuchLimitErreichtText());
+        String versuchLimitErreicht = UserMessagesText.VERSUCH_LIMIT_ERREICHT.toString();
+        System.out.println(Farbcodes.ROT.formatText(versuchLimitErreicht));
     }
 
     private void versendenBestellungZumLogistik(Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorbZumVersenden
             , UserFileManager userFileManager) {
         apotheke.paketVersandService.createUndSendPaketAusWarenkorb(warenbestand, warenkorbZumVersenden, userFileManager);
     }
-
-
 }

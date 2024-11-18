@@ -7,3 +7,4 @@
 805,a,a,a,a,a
 694,s,s,s,s,s
 336,f,ff,f,f,f
+196,u,u,u,u,u

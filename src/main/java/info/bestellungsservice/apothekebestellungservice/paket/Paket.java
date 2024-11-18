@@ -1,6 +1,6 @@
 package info.bestellungsservice.apothekebestellungservice.paket;
 
-import info.bestellungsservice.apothekebestellungservice.utils.UserMessages;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,10 +21,10 @@ public class Paket {
     }
 
     public void showPaketZumVersenden(){
-        System.out.println(UserMessages.paketInfoText()[0] + paketNummer);
-        System.out.println(UserMessages.paketInfoText()[1] + gewicht);
-        System.out.println(UserMessages.paketInfoText()[2] + zielAdresse);
-        System.out.println(UserMessages.paketInfoText()[3] + zugestellt);
+        System.out.println("Paketnummer: " + paketNummer);
+        System.out.println("Gewicht: " + gewicht);
+        System.out.println("Zieladresse: " + zielAdresse);
+        System.out.println("Status der Lieferung: " + zugestellt);
         System.out.println(paketInhalt.toString());
 
         visualisierePaketInhalt();
