@@ -1,6 +1,7 @@
 package info.bestellungsservice.apothekebestellungservice.kunde;
 
-import info.bestellungsservice.apothekebestellungservice.utils.UserMessages;
+import info.bestellungsservice.apothekebestellungservice.enums.UserMessagesText;
+
 
 import java.io.*;
 import java.nio.file.Files;
@@ -69,7 +70,7 @@ public class UserFileManager {
                 throw new RuntimeException(e);
             }
         }else {
-            System.out.println(UserMessages.emailExistiertSchonText());
+            System.out.println(UserMessagesText.EMAIL_EXISTIERT_SCHON);
         }
     }
 
