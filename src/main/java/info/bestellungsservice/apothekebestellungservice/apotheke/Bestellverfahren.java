@@ -19,7 +19,7 @@ public class Bestellverfahren {
     public void bestellungAufgeben(Warenbestand warenbestand, Warenkorb warenkorb) {
         //Scanner scanner = new Scanner(System.in);
         // Die Methode fragt den Benutzer, ob er etwas bestellen möchte
-        if (BenutzerFragen.frageJaNein(scanner, UserMessagesText.FRAGE_OB_BESTELLT_WERDEN_SOL.toString())) {
+        if (BenutzerFragen.frageJaNein(scanner, UserMessagesText.FRAGE_OB_BESTELLT_WERDEN_SOLL.toString())) {
             System.out.println();
 
             // ermöglicht, mehrere Produkte zu bestellen.
@@ -32,6 +32,7 @@ public class Bestellverfahren {
                 int menge = scanner.nextInt();
 
                 pruefeUndAktualisiereMedikamentImWarenkorb(nameMedikament, menge, warenbestand, warenkorb);
+                // Aktualisierung des Warenbestands
 
                 if (warenkorb.produktList.isEmpty()) {
                     System.out.println(UserMessagesText.LEER_WARENKORB_NACHRICHT);
@@ -90,15 +91,18 @@ public class Bestellverfahren {
         // ermöglicht dies eine weitere Bearbeitung des vorhandenen Medikaments
         if (warenkorb.produktList.containsKey(nameMedikament)) {
 
-            if (warenbestand.produkte.get(nameMedikament).getMenge() - menge - warenkorb.produktList.get(nameMedikament) >= 0) {
+            if (warenbestand.produkte.get(nameMedikament).getMenge() - menge >= 0) {
                 warenkorb.addProdukte(nameMedikament, warenkorb.produktList.get(nameMedikament) + menge);
+                warenbestand.deleteProdukte(nameMedikament, menge, warenbestand.produkte);
+
             }else {
                 String lagerbestandWarnungText = UserMessagesText.LAGERBESTAND_WARNUNG.toString();
                 System.out.println(Farbcodes.ROT.formatText(lagerbestandWarnungText));
             }
         }else {
-            if (!(warenbestand.produkte.get(nameMedikament).getMenge() - menge < 0)) {
+            if (warenbestand.produkte.get(nameMedikament).getMenge() - menge >= 0) {
                 warenkorb.addProdukte(nameMedikament, menge);
+                warenbestand.deleteProdukte(nameMedikament, menge, warenbestand.produkte);
             }else {
                 String lagerbestandWarnungMitVerfuegbarkeitText = UserMessagesText.LAGERBESTAND_WARNUNG_MIT_VERFUEGBARKEIT
                         .format(warenbestand.produkte.get(nameMedikament).getMenge());
@@ -119,8 +123,13 @@ public class Bestellverfahren {
         }else if(BenutzerFragen.frageJaNein(scanner, UserMessagesText.BESTELL_AENDERUNGS_OPTION.toString())) {
             // Wenn der Benutzer die gesamte Bestellung abbrechen möchte,
             // wird der Warenkorb geleert und der aktuelle (leere) Warenkorb angezeigt.
+            for(Map.Entry<String, Integer> entry: warenkorb.produktList.entrySet()){
+                // Aktualisierung des Warenbestands
+                warenbestand.addProdukte(entry.getKey(), entry.getValue(), warenbestand.produkte);
+            }
             warenkorb.clearProdukt();
             warenkorb.showWarenkorb();
+            warenbestand.showWarenBestand();
         }else{
             if (BenutzerFragen.frageJaNein(scanner, UserMessagesText.FRAGE_HINZUFUEGEN_ODER_REDUZIEREN.toString())) {
                 bestellungAufgeben(warenbestand, warenkorb);
@@ -154,22 +163,15 @@ public class Bestellverfahren {
     public void berechneGesamtpreis(Map<String, Integer> produktList,
                                     Warenbestand warenbestand) {
         Apotheke apotheke = Apotheke.getInstance();
-        double betragBestellen = 0;
         //Iterieren über die Produktliste, um den Gesamtpreis zu berechnen.
         for(Map.Entry<String, Integer> entry: produktList.entrySet()){
-            betragBestellen += warenbestand.produkte.get(entry.getKey()).getPreis() * entry.getValue();
             // Aktualisierung des Warenbestands
-            warenbestand.deleteProdukte(entry.getKey(), entry.getValue(), warenbestand.produkte);
             apotheke.warenkorbZumVersenden.addProdukte(entry.getKey(), entry.getValue());
         }
-
-        System.out.println(UserMessagesText.BESTELL_BESTAETIGUNGS_FRAGE);
 
         //Anzeige des Belegs
         AnzeigenBeleg.anzeigenBeleg(produktList, warenbestand);
 
-        String gesamtbetragText = UserMessagesText.GESAMTBETRAG.format(Math.round(betragBestellen * 100.0) / 100.0);
-        System.out.println(Farbcodes.HELLBLAU.formatText(gesamtbetragText));
     }
 
 }

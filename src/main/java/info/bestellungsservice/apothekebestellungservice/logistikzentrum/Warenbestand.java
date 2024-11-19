@@ -1,5 +1,6 @@
 package info.bestellungsservice.apothekebestellungservice.logistikzentrum;
 
+import info.bestellungsservice.apothekebestellungservice.enums.Farbcodes;
 import info.bestellungsservice.apothekebestellungservice.enums.ProduktList;
 import info.bestellungsservice.apothekebestellungservice.produkt.Produkt;
 
@@ -26,12 +27,14 @@ public class Warenbestand {
         System.out.println("Aktueller Warenbestand:");
         for(Map.Entry<String, Produkt> produkt: produkte.entrySet()){
             //System.out.println(produkt.getKey() + ": " + produkt.getValue().getMenge() + " Stück");
+            String menge = produkt.getValue().getMenge() > 0 ? Farbcodes.GRUEN.formatText(produkt.getValue().getMenge()) : Farbcodes.ROT.formatText(produkt.getValue().getMenge());
 
             System.out.println(produkt.getKey() + " -> " + "Preis: " + produkt.getValue().getPreis() + ", "
                     + "Gewicht: " + produkt.getValue().getGewicht() + ", " + "Verfügbar: "
-                    + produkt.getValue().getMenge() + ", Produktnummer: " + ProduktList.valueOf(produkt.getKey().toUpperCase()).getProduktNummer());
+                    + menge + ", Produktnummer: " + ProduktList.valueOf(produkt.getKey().toUpperCase()).getProduktNummer());
         }
     }
+
     // Ausgabe konkreten Produkt
     public void getProdukte(String productName) {
         if (produkte.containsKey(productName)){
@@ -41,6 +44,10 @@ public class Warenbestand {
 
     // entfernen Werte des Produkts
     public void deleteProdukte(String name, int menge, Map<String, Produkt> produkte) {
+        produkte.get(name).setMenge((produkte.get(name).getMenge() - menge));
+    }
+
+    public void deleteProdukte(String name, int menge) {
         produkte.get(name).setMenge((produkte.get(name).getMenge() - menge));
     }
 

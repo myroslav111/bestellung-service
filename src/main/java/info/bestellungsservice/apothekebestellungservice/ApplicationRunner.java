@@ -31,6 +31,8 @@ public class ApplicationRunner {
         //userFileManager.liestUsers();
         anmelden(apotheke, userFileManager, warenbestand, warenkorb, kunde);
 
+        if (warenkorb.produktList.isEmpty()) return;
+
         versendenBestellungZumLogistik(apotheke, warenbestand, apotheke.warenkorbZumVersenden, userFileManager);
     }
 
