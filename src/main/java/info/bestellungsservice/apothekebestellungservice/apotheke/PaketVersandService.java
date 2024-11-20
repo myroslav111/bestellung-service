@@ -21,7 +21,7 @@ public class PaketVersandService {
                 .gewicht(gewichtWarenkorb)
                 .zielAdresse(zielAdresse)
                 .zugestellt(false);
-
+//änderung
 
         addProdukteZumPaket(warenkorbZumVersenden, paketBuilder);
 
