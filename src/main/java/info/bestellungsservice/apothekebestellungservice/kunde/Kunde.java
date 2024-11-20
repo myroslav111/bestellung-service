@@ -30,6 +30,8 @@ public class Kunde {
     }
 
 
+
+
     public void setKunde(Scanner scanner){
             System.out.println("Name:");
             setName(scanner.next());

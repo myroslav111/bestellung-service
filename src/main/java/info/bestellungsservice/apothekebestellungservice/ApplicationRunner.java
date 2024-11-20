@@ -7,6 +7,8 @@ import info.bestellungsservice.apothekebestellungservice.enums.UserMessagesText;
 import info.bestellungsservice.apothekebestellungservice.kunde.Kunde;
 import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
+import info.bestellungsservice.apothekebestellungservice.produkt.ProduktFactory;
+import info.bestellungsservice.apothekebestellungservice.produkt.StandardProduktFactory;
 import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
 import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
 import info.bestellungsservice.apothekebestellungservice.utils.Nachricht;
@@ -24,7 +26,8 @@ public class ApplicationRunner {
     public void run() {
         Apotheke apotheke = Apotheke.getInstance();
         Warenkorb warenkorb = new Warenkorb();
-        Warenbestand warenbestand = new Warenbestand();
+        ProduktFactory factory = new StandardProduktFactory();
+        Warenbestand warenbestand = new Warenbestand(factory);
         UserFileManager userFileManager = new UserFileManager();
         Kunde kunde = new Kunde();
 

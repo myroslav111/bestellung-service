@@ -48,7 +48,8 @@ public class BenutzerService {
                 kontoAnmeldungErfolgreich = true;
                 for (Kunde kunde: userFileManager.getKundenDatenAsList()){
                     if (kunde.getEmail().equalsIgnoreCase(email)) {
-                        apotheke.warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kunde.getKundennummer());
+                        int kundennummer = kunde.getKundennummer();
+                        apotheke.warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kundennummer);
                     }
                 }
             }

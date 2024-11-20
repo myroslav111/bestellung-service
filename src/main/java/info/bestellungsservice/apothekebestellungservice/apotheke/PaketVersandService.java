@@ -21,11 +21,13 @@ public class PaketVersandService {
                 .zugestellt(false);
 
 
+
         addProdukteZumPaket(warenkorbZumVersenden, paketBuilder);
 
         Paket paket = paketBuilder.build();
 
         paket.showPaketZumVersenden();
+        warenbestand.showWarenBestand();
         logistikzentrum.paketeZumVersenden.add(paket);
     }
 

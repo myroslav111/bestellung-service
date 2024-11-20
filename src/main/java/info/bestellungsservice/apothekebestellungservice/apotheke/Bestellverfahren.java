@@ -53,24 +53,25 @@ public class Bestellverfahren {
 
     }
 
-    public void pruefeUndAktualisiereMedikamentImWarenkorb(String nameMedikament, int menge, Warenbestand warenbestand, Warenkorb warenkorb){
+    public void pruefeUndAktualisiereMedikamentImWarenkorb(String nameMedikament, int gewuenschteMenge, Warenbestand warenbestand, Warenkorb warenkorb){
 
         // Wenn der Benutzer bereits ein Medikament hinzugefügt hat,
         // ermöglicht dies eine weitere Bearbeitung des vorhandenen Medikaments
         if (warenkorb.produktList.containsKey(nameMedikament)) {
 
-            if (warenbestand.produkte.get(nameMedikament).getMenge() - menge >= 0) {
-                warenkorb.addProdukte(nameMedikament, warenkorb.produktList.get(nameMedikament) + menge);
-                warenbestand.deleteProdukte(nameMedikament, menge, warenbestand.produkte);
+            if (warenbestand.produkte.get(nameMedikament).getMenge() - gewuenschteMenge >= 0) {
+                int aktualisierteMengeProdukt = warenkorb.produktList.get(nameMedikament) + gewuenschteMenge;
+                warenkorb.addProdukte(nameMedikament, aktualisierteMengeProdukt );
+                warenbestand.deleteProdukte(nameMedikament, gewuenschteMenge, warenbestand.produkte);
 
             }else {
                 String lagerbestandWarnungText = UserMessagesText.LAGERBESTAND_WARNUNG.toString();
                 System.out.println(Farbcodes.ROT.formatText(lagerbestandWarnungText));
             }
         }else {
-            if (warenbestand.produkte.get(nameMedikament).getMenge() - menge >= 0) {
-                warenkorb.addProdukte(nameMedikament, menge);
-                warenbestand.deleteProdukte(nameMedikament, menge, warenbestand.produkte);
+            if (warenbestand.produkte.get(nameMedikament).getMenge() - gewuenschteMenge >= 0) {
+                warenkorb.addProdukte(nameMedikament, gewuenschteMenge);
+                warenbestand.deleteProdukte(nameMedikament, gewuenschteMenge, warenbestand.produkte);
             }else {
                 String lagerbestandWarnungMitVerfuegbarkeitText = UserMessagesText.LAGERBESTAND_WARNUNG_MIT_VERFUEGBARKEIT
                         .format(warenbestand.produkte.get(nameMedikament).getMenge());
@@ -93,7 +94,9 @@ public class Bestellverfahren {
             // wird der Warenkorb geleert und der aktuelle (leere) Warenkorb angezeigt.
             for(Map.Entry<String, Integer> entry: warenkorb.produktList.entrySet()){
                 // Aktualisierung des Warenbestands
-                warenbestand.addProdukte(entry.getKey(), entry.getValue(), warenbestand.produkte);
+                String name = entry.getKey();
+                Integer menge = entry.getValue();
+                warenbestand.addProdukte(name, menge, warenbestand.produkte);
             }
             warenkorb.clearProdukt();
             warenkorb.showWarenkorb();
@@ -114,6 +117,7 @@ public class Bestellverfahren {
 
                 // Aktualisiert die Menge des ausgewählten Produkts im Warenkorb.
                 warenkorb.aktualisiereBestandNachBestellung(medikamentName, menge);
+                warenbestand.addProdukte(medikamentName, menge, warenbestand.produkte);
 
 
                 // Fragt den Benutzer, ob er weitere Produkte reduzieren möchte.
@@ -134,7 +138,9 @@ public class Bestellverfahren {
         //Iterieren über die Produktliste, um den Gesamtpreis zu berechnen.
         for(Map.Entry<String, Integer> entry: produktList.entrySet()){
             // Aktualisierung des Warenbestands
-            apotheke.warenkorbZumVersenden.addProdukte(entry.getKey(), entry.getValue());
+            String produkt = entry.getKey();
+            Integer menge = entry.getValue();
+            apotheke.warenkorbZumVersenden.addProdukte(produkt, menge);
         }
         //Anzeige des Belegs
         AnzeigenBeleg.anzeigenBeleg(produktList, warenbestand);
