@@ -18,4 +18,8 @@ public enum Farbcodes {
     public String formatText(String text) {
         return code + text + "\u001B[0m";
     }
+
+    public String formatText(int integer) {
+        return code + integer + "\u001B[0m";
+    }
 }

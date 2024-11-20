@@ -45,6 +45,8 @@ public class Warenkorb {
     }
 
     public void showWarenkorb(){
+        if (produktList.isEmpty()) System.out.println(UserMessagesText.WARENKORB_STATUS_IST_LEER);
+
         for(Map.Entry<String, Integer> produkt: produktList.entrySet()){
             int bestellungsNummer = ProduktList.getProduktNummerByName(produkt.getKey());
             String bestellung = (produkt.getKey() + "\n").repeat(produkt.getValue());

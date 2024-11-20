@@ -1,12 +1,12 @@
 package info.bestellungsservice.apothekebestellungservice.apotheke;
 
-import info.bestellungsservice.apothekebestellungservice.kunde.Kunde;
 import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Logistikzentrum;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
 import info.bestellungsservice.apothekebestellungservice.paket.Paket;
 import info.bestellungsservice.apothekebestellungservice.paket.PaketBuilder;
 import info.bestellungsservice.apothekebestellungservice.paket.PaketBuilderInterface;
+import info.bestellungsservice.apothekebestellungservice.utils.Suche;
 
 public class PaketVersandService {
 
@@ -17,7 +17,7 @@ public class PaketVersandService {
         PaketBuilderInterface paketBuilder = new PaketBuilder()
                 .paketNummer((int)(Math.random() * 1000))
                 .gewicht(warenkorbZumVersenden.getGewichtWarenkorb(warenbestand, warenkorbZumVersenden))
-                .zielAdresse(findeZielAdresse(userFileManager, warenkorbZumVersenden))
+                .zielAdresse(Suche.findeZielAdresse(userFileManager, warenkorbZumVersenden))
                 .zugestellt(false);
 
 
@@ -27,16 +27,6 @@ public class PaketVersandService {
 
         paket.showPaketZumVersenden();
         logistikzentrum.paketeZumVersenden.add(paket);
-    }
-
-    public String findeZielAdresse(UserFileManager userFileManager, Warenkorb warenkorbZumVersenden) {
-        // Durchsuche die Kundendaten, um die Zieladresse für das Paket zu finden
-        for (Kunde curKunde: userFileManager.getKundenDatenAsList()){
-            if (curKunde.getKundennummer() == warenkorbZumVersenden.getKundenummerCurrentWarenkorb()) {
-                return curKunde.getAdresse();
-            }
-        }
-        return null;
     }
 
     public void addProdukteZumPaket(Warenkorb warenkorbZumVersenden, PaketBuilderInterface paketBuilder){
