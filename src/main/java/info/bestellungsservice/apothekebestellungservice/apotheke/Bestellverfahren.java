@@ -1,11 +1,11 @@
 package info.bestellungsservice.apothekebestellungservice.apotheke;
 
 import info.bestellungsservice.apothekebestellungservice.enums.Farbcodes;
-import info.bestellungsservice.apothekebestellungservice.enums.ProduktList;
 import info.bestellungsservice.apothekebestellungservice.enums.UserMessagesText;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
 import info.bestellungsservice.apothekebestellungservice.utils.AnzeigenBeleg;
 import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
+import info.bestellungsservice.apothekebestellungservice.utils.Suche;
 
 
 import java.util.Map;
@@ -27,7 +27,7 @@ public class Bestellverfahren {
                 // Jedes Produkt wird durch einen Aufruf angezeigt
                 warenbestand.showWarenBestand();
                 System.out.println(UserMessagesText.FRAGE_NACH_GEWUENSCHTEM_PRODUKT);
-                String nameMedikament = sucheMedikamentNachEingabe();
+                String nameMedikament = Suche.sucheMedikamentNachEingabe(scanner);
                 System.out.println(UserMessagesText.FRAGE_NACH_GEWUENSCHTER_ANZAHL);
                 int menge = scanner.nextInt();
 
@@ -51,38 +51,6 @@ public class Bestellverfahren {
 
         }
 
-    }
-
-    public String sucheMedikamentNachEingabe(){
-        String nameMedikament = "";
-        // Konsumiere den Zeilenumbruch
-        scanner.nextLine();
-        //entscheidet auf Grundlage von scanner.hasNextInt(), welche Methode aufgerufen wird:
-        Object inputUser = scanner.hasNextInt() ? scanner.nextInt() : scanner.nextLine();
-
-        for(ProduktList produkt: ProduktList.values()){
-            // Diese Bedingung überprüft, ob inputUser eine Instanz der Klasse Number ist.
-            // Da inputUser ein Object sein kann (entweder ein Integer oder String),
-            // stellt dies sicher, dass die Eingabe tatsächlich eine Zahl ist und nicht z.B. ein String.
-            // Falls inputUser eine Zahl ist, wird es in Number umgewandelt
-            //intValue() ist eine Methode der Klasse Number, die den Number-Wert in einen int konvertiert.
-            //Prüft, ob inputUser eine Zahl ist.
-            //Konvertiert inputUser (falls es eine Zahl ist) in einen int.
-            //Vergleicht den Wert dieser Zahl mit der Medikamentennummer des Produkts.
-
-            // Überprüfe, ob inputUser eine Zahl ist
-            if(inputUser instanceof Number && ((Number)inputUser).intValue() == produkt.getProduktNummer()){
-                // Setze den Medikamentennamen, wenn die Nummer übereinstimmt
-                nameMedikament = produkt.getProduktName();
-            }else if (produkt.getProduktName().trim().equalsIgnoreCase(inputUser.toString().trim())){
-
-                // Setze den Medikamentennamen, wenn der Name übereinstimmt
-                nameMedikament = produkt.getProduktName();
-            }else {
-                System.out.println();
-            }
-        }
-        return nameMedikament;
     }
 
     public void pruefeUndAktualisiereMedikamentImWarenkorb(String nameMedikament, int menge, Warenbestand warenbestand, Warenkorb warenkorb){
@@ -139,7 +107,7 @@ public class Bestellverfahren {
                 warenkorb.showWarenkorb();
                 System.out.println(UserMessagesText.REDUKTIONS_ANFRAGE_PRODUKT);
 
-                String medikamentName = sucheMedikamentNachEingabe();
+                String medikamentName = Suche.sucheMedikamentNachEingabe(scanner);
 
                 System.out.println(UserMessagesText.ANFRAGE_REDUZIEREN_MENGE.format(medikamentName));
                 int menge = scanner.nextInt();
@@ -168,7 +136,6 @@ public class Bestellverfahren {
             // Aktualisierung des Warenbestands
             apotheke.warenkorbZumVersenden.addProdukte(entry.getKey(), entry.getValue());
         }
-
         //Anzeige des Belegs
         AnzeigenBeleg.anzeigenBeleg(produktList, warenbestand);
 
