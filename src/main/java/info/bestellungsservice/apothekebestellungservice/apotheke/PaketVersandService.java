@@ -14,10 +14,12 @@ public class PaketVersandService {
                                                UserFileManager userFileManager) {
         Logistikzentrum logistikzentrum = Logistikzentrum.getInstance();
 
+        double gewichtWarenkorb = warenkorbZumVersenden.getGewichtWarenkorb(warenbestand, warenkorbZumVersenden);
+        String zielAdresse = Suche.findeZielAdresse(userFileManager, warenkorbZumVersenden);
         PaketBuilderInterface paketBuilder = new PaketBuilder()
                 .paketNummer((int)(Math.random() * 1000))
-                .gewicht(warenkorbZumVersenden.getGewichtWarenkorb(warenbestand, warenkorbZumVersenden))
-                .zielAdresse(Suche.findeZielAdresse(userFileManager, warenkorbZumVersenden))
+                .gewicht(gewichtWarenkorb)
+                .zielAdresse(zielAdresse)
                 .zugestellt(false);
 
 
