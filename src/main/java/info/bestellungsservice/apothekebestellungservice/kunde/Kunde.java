@@ -1,8 +1,5 @@
 package info.bestellungsservice.apothekebestellungservice.kunde;
 
-
-
-
 import lombok.Getter;
 import lombok.Setter;
 

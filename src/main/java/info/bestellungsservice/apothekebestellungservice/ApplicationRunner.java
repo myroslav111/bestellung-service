@@ -34,7 +34,8 @@ public class ApplicationRunner {
         //userFileManager.liestUsers();
         anmelden(apotheke, userFileManager, warenbestand, warenkorb, kunde);
 
-        if (warenkorb.produktList.isEmpty()) return;
+        boolean isWarenkorbempty = warenkorb.produktList.isEmpty();
+        if (isWarenkorbempty) return;
 
         versendenBestellungZumLogistik(apotheke, warenbestand, apotheke.warenkorbZumVersenden, userFileManager);
     }
@@ -53,7 +54,8 @@ public class ApplicationRunner {
                                Warenkorb warenkorb, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
         String userEmailInput = AbfrageAnmeldedaten.userInputEmail(scanner);
-        if (userFileManager.checkEmailVorhanden(userEmailInput)) {
+        boolean checkEmailVorhanden = userFileManager.checkEmailVorhanden(userEmailInput);
+        if (checkEmailVorhanden) {
             System.out.println(UserMessagesText.ACCOUNT_EXISTIERT);
             startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
 
@@ -74,7 +76,8 @@ public class ApplicationRunner {
 
     private void startBestellprozess(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand,
                                      Warenkorb warenkorb) {
-        if (apotheke.benutzerService.benutzerAnmeldungProzess(scanner, apotheke, userFileManager)) {
+        boolean isUserRegistriert = apotheke.benutzerService.benutzerAnmeldungProzess(scanner, apotheke, userFileManager);
+        if (isUserRegistriert) {
             apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
             return;
         }

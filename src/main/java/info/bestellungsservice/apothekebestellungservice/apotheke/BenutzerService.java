@@ -7,6 +7,7 @@ import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
 import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
 
 
+import java.util.List;
 import java.util.Scanner;
 
 public class BenutzerService {
@@ -46,8 +47,10 @@ public class BenutzerService {
                         .format(userFileManager.getKundenName(email), userFileManager.getKundenVorname(email));
                 System.out.println(Farbcodes.GELB.formatText(begruessung));
                 kontoAnmeldungErfolgreich = true;
-                for (Kunde kunde: userFileManager.getKundenDatenAsList()){
-                    if (kunde.getEmail().equalsIgnoreCase(email)) {
+                List<Kunde> kundenList = userFileManager.getKundenDatenAsList();
+                for (Kunde kunde: kundenList){
+                    boolean isKunde = kunde.getEmail().equalsIgnoreCase(email);
+                    if (isKunde) {
                         int kundennummer = kunde.getKundennummer();
                         apotheke.warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kundennummer);
                     }
