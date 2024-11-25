@@ -35,40 +35,38 @@ public class ApplicationRunner {
         if (isUserLoggedIn) {
             apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
         }else{
-            System.out.println(UserMessagesText.REGISTRATION_PROMT);
+            System.out.println(UserMessagesText.REGISTRATION_PROMPT);
 
             registrierung(userFileManager, apotheke, kunde);
             apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
 
         }
 
-        boolean isWarenkorbempty = warenkorb.produktList.isEmpty();
-        if (isWarenkorbempty) return;
+        boolean isWarenkorbEmpty = warenkorb.produktList.isEmpty();
+        if (isWarenkorbEmpty) return;
 
-        versendenBestellungZumLogistik(apotheke, warenbestand, userFileManager);
+        sendBestellungToLogistikzentrum(apotheke, warenbestand, userFileManager);
     }
 
 
 
-    private void versendenBestellungZumLogistik(Apotheke apotheke, Warenbestand warenbestand
+    private void sendBestellungToLogistikzentrum(Apotheke apotheke, Warenbestand warenbestand
             , UserFileManager userFileManager) {
         apotheke.paketVersandService.createUndSendPaketAusWarenkorb(warenbestand, apotheke.warenkorbZumVersenden, userFileManager);
     }
 
 
-    private boolean checkUserSchonRegistriert(Apotheke apotheke, UserFileManager userFileManager) {
+    private boolean checkUserRegistriert(Apotheke apotheke, UserFileManager userFileManager) {
         boolean isUserRegistriert = apotheke.benutzerService.benutzerAnmeldungProzess(scanner, apotheke, userFileManager);
         if (isUserRegistriert) return true;
-
-        String versuchLimitErreicht = UserMessagesText.VERSUCH_LIMIT_ERREICHT.toString();
-        System.out.println(Farbcodes.ROT.formatText(versuchLimitErreicht));
+        System.out.println(Farbcodes.ROT.formatText(UserMessagesText.VERSUCH_LIMIT_ERREICHT.toString()));
         return false;
     }
 
     private boolean anmelden(Apotheke apotheke, UserFileManager userFileManager) {
         String message = UserMessagesText.KONTO_ABFRAGE.toString();
         if (BenutzerFragen.frageJaNein(scanner, message)) {
-            return checkUserSchonRegistriert(apotheke, userFileManager);
+            return checkUserRegistriert(apotheke, userFileManager);
         }
         return false;
     }
@@ -76,10 +74,9 @@ public class ApplicationRunner {
     private void registrierung(UserFileManager userFileManager, Apotheke apotheke, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
         String userEmailInput = AbfrageAnmeldedaten.userInputEmail(scanner);
-        boolean checkEmailVorhanden = userFileManager.checkEmailVorhanden(userEmailInput);
-        if (checkEmailVorhanden) {
+        if (userFileManager.checkEmailVorhanden(userEmailInput)) {
             System.out.println(UserMessagesText.ACCOUNT_EXISTIERT);
-            checkUserSchonRegistriert(apotheke, userFileManager);
+            checkUserRegistriert(apotheke, userFileManager);
         } else {
             // Setzt die eingegebene E-Mail für das neue Kundenkonto
             kunde.setEmail(userEmailInput);

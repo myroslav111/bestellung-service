@@ -35,8 +35,7 @@ public class Bestellverfahren {
                 pruefeUndAktualisiereMedikamentImWarenkorb(nameMedikament, menge, warenbestand, warenkorb);
                 // Aktualisierung des Warenbestands
 
-                boolean isWarenkorbEmpty = warenkorb.produktList.isEmpty();
-                if (isWarenkorbEmpty) {
+                if (warenkorb.produktList.isEmpty()) {
                     System.out.println(UserMessagesText.LEER_WARENKORB_NACHRICHT);
                 }else{
                     System.out.println(UserMessagesText.WARENKORB_STATUS);
@@ -59,9 +58,8 @@ public class Bestellverfahren {
 
         // Wenn der Benutzer bereits ein Medikament hinzugefügt hat,
         // ermöglicht dies eine weitere Bearbeitung des vorhandenen Medikaments
-        boolean isProduktImWarenkorb = warenkorb.produktList.containsKey(nameMedikament);
         int currentProduktMenge = warenbestand.produkte.get(nameMedikament).getMenge();
-        if (isProduktImWarenkorb) {
+        if (warenkorb.produktList.containsKey(nameMedikament)) {
 
             if (currentProduktMenge - gewuenschteMenge >= 0) {
                 int aktualisierteMengeProdukt = warenkorb.produktList.get(nameMedikament) + gewuenschteMenge;

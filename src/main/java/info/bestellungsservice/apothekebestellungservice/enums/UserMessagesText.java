@@ -30,7 +30,7 @@ public enum UserMessagesText {
     STATUS("Hat gearbeitet"),
     EMAIL_EXISTIERT_SCHON("Es existiert bereits ein Account mit dieser Email.\n"),
     ACCOUNT_EXISTIERT("Existiert bereits. \n Wiederholen Sie Ihre email und passwort"),
-    REGISTRATION_PROMT("Registrieren Sie sich erneut");
+    REGISTRATION_PROMPT("Registrieren Sie sich erneut");
 
 
     private final String message;

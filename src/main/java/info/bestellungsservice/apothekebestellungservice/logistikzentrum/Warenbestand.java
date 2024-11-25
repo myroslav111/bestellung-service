@@ -37,14 +37,9 @@ public class Warenbestand {
             //System.out.println(produkt.getKey() + ": " + produkt.getValue().getMenge() + " Stück");
             String menge = produkt.getValue().getMenge() > 0 ? Farbcodes.GRUEN.formatText(produkt.getValue().getMenge()) : Farbcodes.ROT.formatText(produkt.getValue().getMenge());
 
-            String produktName = produkt.getKey();
-            double produktPreis = produkt.getValue().getPreis();
-            double produktGewicht = produkt.getValue().getGewicht();
-            int produktNummer = ProduktList.valueOf(produktName.toUpperCase()).getProduktNummer();
-
-            System.out.println(produktName + " -> " + "Preis: " + produktPreis + ", "
-                    + "Gewicht: " + produktGewicht + ", " + "Verfügbar: "
-                    + menge + ", Produktnummer: " + produktNummer);
+            System.out.println(produkt.getKey() + " -> " + "Preis: " + produkt.getValue().getPreis() + ", "
+                    + "Gewicht: " + produkt.getValue().getGewicht() + ", " + "Verfügbar: "
+                    + menge + ", Produktnummer: " + ProduktList.valueOf(produkt.getKey().toUpperCase()).getProduktNummer());
         }
     }
 

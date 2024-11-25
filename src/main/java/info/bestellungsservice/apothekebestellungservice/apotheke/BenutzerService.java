@@ -49,8 +49,7 @@ public class BenutzerService {
                 kontoAnmeldungErfolgreich = true;
                 List<Kunde> kundenList = userFileManager.getKundenDatenAsList();
                 for (Kunde kunde: kundenList){
-                    boolean isKunde = kunde.getEmail().equalsIgnoreCase(email);
-                    if (isKunde) {
+                    if (kunde.getEmail().equalsIgnoreCase(email)) {
                         int kundennummer = kunde.getKundennummer();
                         apotheke.warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kundennummer);
                     }
