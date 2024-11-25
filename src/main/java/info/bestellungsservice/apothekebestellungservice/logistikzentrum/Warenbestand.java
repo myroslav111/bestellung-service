@@ -18,11 +18,11 @@ public class Warenbestand {
     public Warenbestand(ProduktFactory produktFactory) {
         this.produktFactory = produktFactory;
         produkte = new HashMap<>();
-        Produkt ibu = produktFactory.createProdukt("Ibu", 10, 5.99, 0.2);
-        Produkt aspirin = produktFactory.createProdukt("Aspirin", 13, 5.99, 0.2);
-        Produkt paracetamol = produktFactory.createProdukt("Paracetamol", 3, 5.99, 0.2);
-        Produkt vitamin_c = produktFactory.createProdukt("Vitamin_C", 15, 5.99, 0.2);
-        Produkt vitamin_d = produktFactory.createProdukt("Vitamin_D", 6, 5.99, 0.2);
+        Produkt ibu = produktFactory.createMedikament("Ibu", 10, 5.99, 0.2);
+        Produkt aspirin = produktFactory.createMedikament("Aspirin", 13, 5.99, 0.2);
+        Produkt paracetamol = produktFactory.createMedikament("Paracetamol", 3, 5.99, 0.2);
+        Produkt vitamin_c = produktFactory.createMedikament("Vitamin_C", 15, 5.99, 0.2);
+        Produkt vitamin_d = produktFactory.createMedikament("Vitamin_D", 6, 5.99, 0.2);
         produkte.put(ProduktList.IBU.getProduktName(), ibu);
         produkte.put(ProduktList.ASPIRIN.getProduktName(), aspirin);
         produkte.put(ProduktList.PARACETAMOL.getProduktName(), paracetamol);
