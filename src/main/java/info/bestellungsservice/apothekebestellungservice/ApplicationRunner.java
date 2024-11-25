@@ -45,14 +45,14 @@ public class ApplicationRunner {
         boolean isWarenkorbempty = warenkorb.produktList.isEmpty();
         if (isWarenkorbempty) return;
 
-        versendenBestellungZumLogistik(apotheke, warenbestand, apotheke.warenkorbZumVersenden, userFileManager);
+        versendenBestellungZumLogistik(apotheke, warenbestand, userFileManager);
     }
 
 
 
-    private void versendenBestellungZumLogistik(Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorbZumVersenden
+    private void versendenBestellungZumLogistik(Apotheke apotheke, Warenbestand warenbestand
             , UserFileManager userFileManager) {
-        apotheke.paketVersandService.createUndSendPaketAusWarenkorb(warenbestand, warenkorbZumVersenden, userFileManager);
+        apotheke.paketVersandService.createUndSendPaketAusWarenkorb(warenbestand, apotheke.warenkorbZumVersenden, userFileManager);
     }
 
 
