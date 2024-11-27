@@ -1,8 +1,5 @@
 package info.bestellungsservice.apothekebestellungservice.kunde;
 
-
-
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +25,8 @@ public class Kunde {
         this.email = email.toLowerCase();
         this.passwort = passwort;
     }
+
+
 
 
     public void setKunde(Scanner scanner){

@@ -1,10 +1,7 @@
-826,Müller,Max,Hauptstraße 3,mueller@email.com,password
+826,Müller,Max,Hauptstraße 3,mueller@email.com,password,
 827,Schmidt,Anna,Nebenstraße 4,schmidt@email.com,password
 828,Meier,Hans,Hinterstraße 5,Meier@email.com,password
 
 
-68,test,test,test,test@email.com,test
 805,a,a,a,a,a
-694,s,s,s,s,s
-336,f,ff,f,f,f
-196,u,u,u,u,u
+601,s,s,s,s,s

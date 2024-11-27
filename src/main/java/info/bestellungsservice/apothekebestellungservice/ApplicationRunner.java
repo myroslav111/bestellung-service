@@ -7,6 +7,8 @@ import info.bestellungsservice.apothekebestellungservice.enums.UserMessagesText;
 import info.bestellungsservice.apothekebestellungservice.kunde.Kunde;
 import info.bestellungsservice.apothekebestellungservice.kunde.UserFileManager;
 import info.bestellungsservice.apothekebestellungservice.logistikzentrum.Warenbestand;
+import info.bestellungsservice.apothekebestellungservice.produkt.ProduktFactory;
+import info.bestellungsservice.apothekebestellungservice.produkt.StandardProduktFactory;
 import info.bestellungsservice.apothekebestellungservice.utils.AbfrageAnmeldedaten;
 import info.bestellungsservice.apothekebestellungservice.utils.BenutzerFragen;
 import info.bestellungsservice.apothekebestellungservice.utils.Nachricht;
@@ -24,63 +26,68 @@ public class ApplicationRunner {
     public void run() {
         Apotheke apotheke = Apotheke.getInstance();
         Warenkorb warenkorb = new Warenkorb();
-        Warenbestand warenbestand = new Warenbestand();
+        ProduktFactory factory = new StandardProduktFactory();
+        Warenbestand warenbestand = new Warenbestand(factory);
         UserFileManager userFileManager = new UserFileManager();
         Kunde kunde = new Kunde();
 
-        //userFileManager.liestUsers();
-        anmelden(apotheke, userFileManager, warenbestand, warenkorb, kunde);
+        boolean isUserLoggedIn = anmelden(apotheke, userFileManager);
+        if (isUserLoggedIn) {
+            apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
+        }else{
+            System.out.println(UserMessagesText.REGISTRATION_PROMPT);
 
-        if (warenkorb.produktList.isEmpty()) return;
+            registrierung(userFileManager, apotheke, kunde);
+            apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
 
-        versendenBestellungZumLogistik(apotheke, warenbestand, apotheke.warenkorbZumVersenden, userFileManager);
+        }
+
+        boolean isWarenkorbEmpty = warenkorb.produktList.isEmpty();
+        if (isWarenkorbEmpty) return;
+
+        sendBestellungToLogistikzentrum(apotheke, warenbestand, userFileManager);
     }
 
-    private void anmelden(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand,
-                          Warenkorb warenkorb, Kunde kunde) {
+
+
+    private void sendBestellungToLogistikzentrum(Apotheke apotheke, Warenbestand warenbestand
+            , UserFileManager userFileManager) {
+        apotheke.paketVersandService.createUndSendPaketAusWarenkorb(warenbestand, apotheke.warenkorbZumVersenden, userFileManager);
+    }
+
+
+    private boolean checkUserRegistriert(Apotheke apotheke, UserFileManager userFileManager) {
+        boolean isUserRegistriert = apotheke.benutzerService.benutzerAnmeldungProzess(scanner, apotheke, userFileManager);
+        if (isUserRegistriert) return true;
+        System.out.println(Farbcodes.ROT.formatText(UserMessagesText.VERSUCH_LIMIT_ERREICHT.toString()));
+        return false;
+    }
+
+    private boolean anmelden(Apotheke apotheke, UserFileManager userFileManager) {
         String message = UserMessagesText.KONTO_ABFRAGE.toString();
         if (BenutzerFragen.frageJaNein(scanner, message)) {
-            startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
-        } else {
-            registrierung(userFileManager, apotheke, warenbestand, warenkorb, kunde);
+            return checkUserRegistriert(apotheke, userFileManager);
         }
+        return false;
     }
 
-    private void registrierung(UserFileManager userFileManager, Apotheke apotheke, Warenbestand warenbestand,
-                               Warenkorb warenkorb, Kunde kunde) {
+    private void registrierung(UserFileManager userFileManager, Apotheke apotheke, Kunde kunde) {
         // Überprüft, ob der Benutzername (basierend auf der E-Mail) bereits existiert
         String userEmailInput = AbfrageAnmeldedaten.userInputEmail(scanner);
         if (userFileManager.checkEmailVorhanden(userEmailInput)) {
             System.out.println(UserMessagesText.ACCOUNT_EXISTIERT);
-            startBestellprozess(apotheke, userFileManager, warenbestand, warenkorb);
-
+            checkUserRegistriert(apotheke, userFileManager);
+        } else {
+            // Setzt die eingegebene E-Mail für das neue Kundenkonto
+            kunde.setEmail(userEmailInput);
+            // Initialisiert das Kundenobjekt
+            kunde.setKunde(scanner);
+            apotheke.warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kunde.getKundennummer());
+            System.out.println(kunde.getKundennummer());
+            // kunde in db hinzufügt
+            userFileManager.addKunde(kunde);
+            Nachricht.begruessung(kunde.name, kunde.vorname);
         }
-
-        // Setzt die eingegebene E-Mail für das neue Kundenkonto
-        kunde.setEmail(userEmailInput);
-        // Initialisiert das Kundenobjekt
-        kunde.setKunde(scanner);
-        apotheke.warenkorbZumVersenden.setKundenummerCurrentWarenkorb(kunde.getKundennummer());
-        System.out.println(kunde.getKundennummer());
-        // kunde in db hinzufügt
-        userFileManager.addKunde(kunde);
-        Nachricht.begruessung(kunde.name, kunde.vorname);
-        // Ermöglicht dem neuen Benutzer, eine Bestellung aufzugeben
-        apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
     }
 
-    private void startBestellprozess(Apotheke apotheke, UserFileManager userFileManager, Warenbestand warenbestand,
-                                     Warenkorb warenkorb) {
-        if (apotheke.benutzerService.benutzerAnmeldungProzess(scanner, apotheke, userFileManager)) {
-            apotheke.bestellverfahren.bestellungAufgeben(warenbestand, warenkorb);
-            return;
-        }
-        String versuchLimitErreicht = UserMessagesText.VERSUCH_LIMIT_ERREICHT.toString();
-        System.out.println(Farbcodes.ROT.formatText(versuchLimitErreicht));
-    }
-
-    private void versendenBestellungZumLogistik(Apotheke apotheke, Warenbestand warenbestand, Warenkorb warenkorbZumVersenden
-            , UserFileManager userFileManager) {
-        apotheke.paketVersandService.createUndSendPaketAusWarenkorb(warenbestand, warenkorbZumVersenden, userFileManager);
-    }
 }

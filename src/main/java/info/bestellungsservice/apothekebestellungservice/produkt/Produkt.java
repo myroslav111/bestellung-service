@@ -12,10 +12,12 @@ public class Produkt {
     private double preis;
     private double gewicht;
 
-    public Produkt( int menge, double preis, double gewicht) {
+    public Produkt(String produktName, int menge, double preis, double gewicht) {
         this.produktName = produktName;
         this.menge = menge;
         this.preis = preis;
         this.gewicht = gewicht;
     }
+
+
 }

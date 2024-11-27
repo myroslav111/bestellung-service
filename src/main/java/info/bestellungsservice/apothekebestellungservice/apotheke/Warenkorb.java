@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -30,14 +31,16 @@ public class Warenkorb {
 
     }
 
-    public void aktualisiereBestandNachBestellung(String nameMedikament, int menge){
+    public void aktualisiereBestandNachBestellung(String produktName, int gewuenschteProduktMenge){
         // Überprüft, ob die gewünschte Menge des Medikaments im Bestand ausreicht.
-        if (produktList.get(nameMedikament) < menge || produktList.get(nameMedikament) - menge < 0){
+        int aktuelleProduktMengeImWarenkorb = produktList.get(produktName);
+        if (aktuelleProduktMengeImWarenkorb < gewuenschteProduktMenge || aktuelleProduktMengeImWarenkorb - gewuenschteProduktMenge < 0){
             System.out.println(UserMessagesText.REDUZIERTE_BESTELLMENGE);
         } else {
             // Aktualisiert den Bestand des Medikaments mit der neuen Menge,
             // wenn ausreichend Bestand vorhanden ist.
-            produktList.put(nameMedikament, menge);
+            int resultDivedieren = produktList.get(produktName) - gewuenschteProduktMenge;
+            produktList.put(produktName, resultDivedieren);
             String statusBestellung = UserMessagesText.STATUS.toString();
             System.out.println(Farbcodes.GRUEN.formatText(statusBestellung));
         }
@@ -47,9 +50,12 @@ public class Warenkorb {
     public void showWarenkorb(){
         if (produktList.isEmpty()) System.out.println(UserMessagesText.WARENKORB_STATUS_IST_LEER);
 
-        for(Map.Entry<String, Integer> produkt: produktList.entrySet()){
-            int bestellungsNummer = ProduktList.getProduktNummerByName(produkt.getKey());
-            String bestellung = (produkt.getKey() + "\n").repeat(produkt.getValue());
+        Set<Map.Entry<String, Integer>> warenkorbInhaht = produktList.entrySet();
+        for(Map.Entry<String, Integer> produkt: warenkorbInhaht){
+            String produktName = produkt.getKey();
+            int bestellungsNummer = ProduktList.getProduktNummerByName(produktName);
+            int produktMenge = produkt.getValue();
+            String bestellung = (produktName + "\n").repeat(produktMenge);
             System.out.println(bestellung);
         }
 
@@ -57,8 +63,11 @@ public class Warenkorb {
 
     public double getGewichtWarenkorb(Warenbestand warenbestand, Warenkorb warenkorbZumVersenden){
         double gewichtWarenkorb = 0;
-        for(Map.Entry<String, Integer> produkt: warenkorbZumVersenden.produktList.entrySet()){
-            gewichtWarenkorb += warenbestand.produkte.get(produkt.getKey()).getGewicht() * produkt.getValue();
+        Set<Map.Entry<String, Integer>> warenkorbInhalt = warenkorbZumVersenden.produktList.entrySet();
+        for(Map.Entry<String, Integer> produkt: warenkorbInhalt){
+            double produktGewicht = warenbestand.produkte.get(produkt.getKey()).getGewicht();
+            int produktMenge = produkt.getValue();
+            gewichtWarenkorb += produktGewicht * produktMenge;
         }
 
         return Math.round(gewichtWarenkorb * 100.0) / 100.0 ;

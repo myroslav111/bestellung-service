@@ -58,12 +58,15 @@ public class UserFileManager {
 
         // Überprüft, ob der Kunde bereits existiert, basierend auf dem Passwort
         //System.out.println(!isKunde(kunde.getPasswort(), kunde.getPasswort()));
-        if (!isKunde(kunde.getPasswort(), kunde.getPasswort())) {
+        String userEmail = kunde.getEmail();
+        String userPsw = kunde.getPasswort();
+        if (!isKunde(userEmail, userPsw)) {
             System.out.println();
             // Wenn der Kunde nicht existiert, wird ein BufferedWriter erstellt, um in die Datei zu schreiben
             try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
                 // Liest die bestehenden Benutzer und schreibt sie in die Datei
-                bufferedWriter.write(kunde.toString());
+                String userDatenInFormEinerZeichenfolge = kunde.toString();
+                bufferedWriter.write(userDatenInFormEinerZeichenfolge);
                 bufferedWriter.newLine();
 
             } catch (Exception e) {
@@ -77,7 +80,8 @@ public class UserFileManager {
     public String getKundenName(String email){
         String kundeName = "";
         for(Kunde curKunde: getKundenDatenAsList()){
-            if (curKunde.getEmail().equals(email)) {
+            boolean isUser = curKunde.getEmail().equals(email);
+            if (isUser) {
                 kundeName = curKunde.getName();
             }
         }
@@ -87,7 +91,8 @@ public class UserFileManager {
     public String getKundenVorname(String email){
         String kundeVorname = "";
         for(Kunde curKunde: getKundenDatenAsList()){
-            if (curKunde.getEmail().equals(email)) {
+            boolean isUser = curKunde.getEmail().equals(email);
+            if (isUser) {
                 kundeVorname = curKunde.getVorname();
             }
         }
@@ -97,7 +102,8 @@ public class UserFileManager {
     public boolean checkEmailVorhanden(String email){
         boolean isEmail = false;
         for(Kunde curKunde: getKundenDatenAsList()){
-            if (curKunde.getEmail().equals(email)) {
+            boolean isUser = curKunde.getEmail().equals(email);
+            if (isUser) {
                 isEmail = true;
                 break;
             }
